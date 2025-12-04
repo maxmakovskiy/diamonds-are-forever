@@ -5,6 +5,7 @@
 
 </div>
 
+
 ---
 
 ### Setup guide
@@ -50,3 +51,9 @@ Hello world
 ````bash
 docker compose down
 ````
+
+---
+
+### Acknowledgements
+
+Photo for logo has been taken from the work of [Edgar Soto](https://unsplash.com/@edgardo1987?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) that is pusblished on [Unsplash](https://unsplash.com/photos/two-diamond-studded-silver-rings-gb0BZGae1Nk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
