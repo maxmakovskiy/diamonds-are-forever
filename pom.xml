@@ -14,6 +14,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <!-- https://javalin.io/documentation#getting-started -->
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <version>6.7.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <!-- https://mvnrepository.com/artifact/com.diffplug.spotless/spotless-maven-plugin -->
