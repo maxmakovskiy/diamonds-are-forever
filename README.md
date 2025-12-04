@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="diamonds.jpg" alt="Best Matching 25-th iteration" width="400">
+  <img src="diamonds.jpg" alt="Best Matching 25-th iteration" width="500">
 
 # Diamonds Are Forever
 
