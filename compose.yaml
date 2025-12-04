@@ -1,0 +1,9 @@
+services:
+  diamonds:
+    build:
+      context: .
+      dockerfile: ./compose/diamonds/Dockerfile
+    image: diamonds_local_javalin
+    container_name: diamonds_local_javalin
+    ports:
+      - 8080:8080
