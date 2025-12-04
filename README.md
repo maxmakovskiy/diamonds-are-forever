@@ -1,5 +1,9 @@
-# diamonds-are-forever
-Practical work 3 for DAI
+<div align="center">
+  <img src="diamonds.jpg" alt="Best Matching 25-th iteration" width="400">
+
+# Diamonds Are Forever
+
+</div>
 
 ---
 
