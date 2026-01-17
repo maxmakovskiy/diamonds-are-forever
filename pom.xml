@@ -21,6 +21,13 @@
             <artifactId>javalin</artifactId>
             <version>6.7.0</version>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.jdbi/jdbi3-core -->
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-core</artifactId>
+            <version>3.51.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
