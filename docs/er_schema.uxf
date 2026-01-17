@@ -13,7 +13,7 @@ transfer_date
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>549</x><y>261</y><w>81</w><h>117</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>549</x><y>261</y><w>90</w><h>117</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
 arrived to ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1485</x><y>288</y><w>126</w><h>162</h></coordinates><panel_attributes>Item
@@ -130,7 +130,7 @@ arrived from ^</panel_attributes><additional_attributes>10;10;10;110</additional
 m1=1..1
 m2=0..*
 triggered by ^</panel_attributes><additional_attributes>20;10;20;240;310;240</additional_attributes></element><element><id>Relation</id><coordinates><x>657</x><y>405</y><w>846</w><h>36</h></coordinates><panel_attributes>lt=-
-m1=0..1
+m1=1..1
 m2=0..*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1638</x><y>135</y><w>171</w><h>135</h></coordinates><panel_attributes>1) responsible_office_id is precomputed from appropiet action
 2) supplier_id should be an id of the same counterpart from Purchase who sold an item to us
 3) jewerly does not have a dedicated certificate
