@@ -119,33 +119,22 @@ CREATE TABLE action (
 );
 
 -- ======================
--- Loose stone
+-- White diamond
 -- ======================
 
-CREATE TABLE loose_stone (
+CREATE TABLE white_diamond (
     lot_id INTEGER PRIMARY KEY,
     weight_ct REAL NOT NULL CHECK (weight_ct > 0),
     shape TEXT NOT NULL,
     length REAL NOT NULL,
     width REAL NOT NULL,
     depth REAL NOT NULL,
-    FOREIGN KEY (lot_id)
-        REFERENCES item(lot_id)
-        ON DELETE RESTRICT ON UPDATE CASCADE,
-    CHECK (length > 0 AND width > 0 AND depth > 0)
-);
-
--- ======================
--- White diamond
--- ======================
-
-CREATE TABLE white_diamond (
-    lot_id INTEGER PRIMARY KEY,
     white_scale TEXT NOT NULL,
     clarity TEXT NOT NULL,
     FOREIGN KEY (lot_id)
         REFERENCES loose_stone(lot_id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
 -- ======================
@@ -154,6 +143,11 @@ CREATE TABLE white_diamond (
 
 CREATE TABLE colored_diamond (
     lot_id INTEGER PRIMARY KEY,
+    weight_ct REAL NOT NULL CHECK (weight_ct > 0),
+    shape TEXT NOT NULL,
+    length REAL NOT NULL,
+    width REAL NOT NULL,
+    depth REAL NOT NULL,
     gem_type TEXT NOT NULL,
     fancy_intensity TEXT NOT NULL,
     fancy_overtone TEXT NOT NULL,
@@ -161,7 +155,8 @@ CREATE TABLE colored_diamond (
     clarity TEXT NOT NULL,
     FOREIGN KEY (lot_id)
         REFERENCES loose_stone(lot_id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
 -- ======================
@@ -170,34 +165,18 @@ CREATE TABLE colored_diamond (
 
 CREATE TABLE colored_gem_stone (
     lot_id INTEGER PRIMARY KEY,
+    weight_ct REAL NOT NULL CHECK (weight_ct > 0),
+    shape TEXT NOT NULL,
+    length REAL NOT NULL,
+    width REAL NOT NULL,
+    depth REAL NOT NULL,
     gem_type TEXT NOT NULL,
     gem_color TEXT NOT NULL,
     treatment TEXT NOT NULL,
     FOREIGN KEY (lot_id)
         REFERENCES loose_stone(lot_id)
-        ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- ======================
--- Jewelry
--- ======================
-
-CREATE TABLE jewelry (
-    lot_id INTEGER PRIMARY KEY,
-    jewelry_type TEXT NOT NULL,
-    gross_weight_gr REAL NOT NULL CHECK (gross_weight_gr > 0),
-    metal_type TEXT NOT NULL,
-    metal_weight_gr REAL NOT NULL CHECK (metal_weight_gr > 0),
-    total_center_stone_qty INTEGER NOT NULL,
-    total_center_stone_weight_ct REAL NOT NULL,
-    centered_stone_type TEXT NOT NULL,
-    total_side_stone_qty INTEGER NOT NULL,
-    total_side_stone_weight_ct REAL NOT NULL,
-    side_stone_type TEXT NOT NULL,
-    FOREIGN KEY (lot_id)
-        REFERENCES item(lot_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CHECK (metal_weight_gr <= gross_weight_gr)
+    CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
 COMMIT;
