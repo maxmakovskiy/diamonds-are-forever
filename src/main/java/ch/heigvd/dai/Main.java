@@ -2,14 +2,30 @@ package ch.heigvd.dai;
 
 import ch.heigvd.dai.item.Item;
 import ch.heigvd.dai.item.ItemDao;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
 import java.util.List;
 
 public class Main {
     private static final int PORT = 8080;
 
     public static void main(String[] args) {
-        Javalin app = Javalin.create();
+        Javalin app =
+                Javalin.create(
+                        config -> {
+                            config.jsonMapper(
+                                    new JavalinJackson()
+                                            .updateMapper(
+                                                    mapper ->
+                                                            mapper.registerModule(
+                                                                            new JavaTimeModule())
+                                                                    .disable(
+                                                                            SerializationFeature
+                                                                                    .WRITE_DATES_AS_TIMESTAMPS)));
+                        });
+
         app.get(
                 "/items",
                 ctx -> {
