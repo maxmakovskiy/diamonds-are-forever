@@ -13,6 +13,8 @@ public class Database {
 
     public final Jdbi jdbi;
 
+    // TODO:
+    // Add secrets management
     private Database() {
         jdbi =
                 Jdbi.create("jdbc:postgresql://postgresql:5432/diamonds", "diamonds", "diamonds")

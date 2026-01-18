@@ -23,6 +23,7 @@ services:
     image: 'postgres:18'
     networks:
       - diamonds-network
+    # TODO: add secrets management?
     environment:
       - POSTGRES_USER=diamonds
       - POSTGRES_PASSWORD=diamonds

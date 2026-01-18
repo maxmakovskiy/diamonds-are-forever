@@ -1,5 +1,6 @@
-package ch.heigvd.dai.item;
+package ch.heigvd.dai.database;
 
+import ch.heigvd.dai.models.Item;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.jdbi.v3.sqlobject.config.RegisterFieldMapper;
@@ -25,6 +26,8 @@ public interface ItemDao {
             @Bind("origin") String origin,
             @Bind("type") String type);
 
+    // `cast (item as item_type)`
+    // explained: https://stackoverflow.com/a/73957533
     @SqlUpdate(
             """
                 INSERT INTO diamonds_are_forever.item (stockName, purchaseDate, origin, type) VALUES (

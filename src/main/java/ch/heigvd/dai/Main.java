@@ -1,13 +1,16 @@
 package ch.heigvd.dai;
 
-import ch.heigvd.dai.database.Database;
-import ch.heigvd.dai.item.Item;
-import ch.heigvd.dai.item.ItemDao;
+import static ch.heigvd.dai.Session.fileSessionHandler;
+import static ch.heigvd.dai.controllers.AuthController.USER_ROLE;
+
+import ch.heigvd.dai.controllers.AuthController;
+import ch.heigvd.dai.controllers.ItemController;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
+import io.javalin.http.HandlerType;
+import io.javalin.http.UnauthorizedResponse;
 import io.javalin.json.JavalinJackson;
-import java.util.List;
 
 public class Main {
     private static final int PORT = 8080;
@@ -25,26 +28,29 @@ public class Main {
                                                                     .disable(
                                                                             SerializationFeature
                                                                                     .WRITE_DATES_AS_TIMESTAMPS)));
+                            config.jetty.modifyServletContextHandler(
+                                    handler -> handler.setSessionHandler(fileSessionHandler()));
                         });
 
-        app.get(
+        app.beforeMatched(
                 "/items",
                 ctx -> {
-                    ItemDao dao = Database.getInstance().jdbi.onDemand(ItemDao.class);
-                    List<Item> items = dao.getAllItems();
-                    ctx.json(items);
-                    ctx.status(200);
+                    if (ctx.method() == HandlerType.POST) {
+                        String role = ctx.sessionAttribute(USER_ROLE);
+                        if (role == ctx.cookie()) {
+                            throw new UnauthorizedResponse();
+                        }
+                    }
                 });
-        app.post(
-                "/items",
-                ctx -> {
-                    ItemDao dao = Database.getInstance().jdbi.onDemand(ItemDao.class);
 
-                    Item item = ctx.bodyValidator(Item.class).get();
+        ItemController itemController = new ItemController();
+        AuthController authController = new AuthController();
 
-                    dao.insertItem(item.stockName, item.purchaseDate, item.origin, item.type);
-                    ctx.status(201);
-                });
+        app.get("/items", itemController::getAllItems);
+        app.post("/items", itemController::createItem);
+        app.post("/sign-in", authController::login);
+        app.post("/sign-out", authController::logout);
+
         app.start(PORT);
     }
 }

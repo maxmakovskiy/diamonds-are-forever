@@ -1,4 +1,4 @@
-package ch.heigvd.dai.item;
+package ch.heigvd.dai.models;
 
 import java.time.OffsetDateTime;
 
