@@ -1,4 +1,4 @@
-package ch.heigvd.dai;
+package ch.heigvd.dai.database;
 
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;

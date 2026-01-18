@@ -1,9 +1,9 @@
 # Diamonds API
 
-## Desciption
+## Description
 
 The diamonds API allows to manage inventory made up of precious stones and jewelries,
-as well as its transfers between the countparties (clients/partners/internal offices). 
+as well as its transfers between the counterparties (clients/partners/internal offices). 
 It uses the HTTP protocol and the JSON format.
 
 The API is based on the CRUD pattern. 
@@ -12,12 +12,12 @@ It has the following operations:
 - Sign-in/sign-out as an employee
 - Show profile of a current user
 - Get current state of the inventory
-- Inspect an item by ID and the stages it has undergone
+- Inspect an item by ID
+- Inspect item's lifecycle by id
 - Update item info
 - Delete item
 - Create new transfer
 - Delete transfer
-
 
 ## Endpoints
 
@@ -92,32 +92,10 @@ The response body contains a JSON object with the following properties:
 - `200` (OK) - The user has been successfully retrieved.
 - `401` (Unauthorized) - The user is not logged in.
 
-
-### Update the user's profile
-
-- `PATCH /users/{id}`
-
-User must be logged-in and have admin-level privileges.
-Invidual cannot update its profile by himself.
-
-#### Request
-
-The request path must contain the ID of the item.
-The request body must contain a JSON object with the properties to update.
-
-#### Response
-
-The reseponse has no body.
-
-#### Status codes
-
-- `200` (OK) - The user has been successfully updated.
-- `400` (Bad Request) - The request body is invalid.
-- `401` (Unauthorized) - The user is not logged in.
-- `404` (Not Found) - The user does not exist.
+---
 
 
-### Get all white diamonds, colored diamonds, colored gemstones and jewelries 
+### Get current state of the inventory
 
 - `GET /items`
 
@@ -125,9 +103,7 @@ Get all the items registered in the system.
 
 #### Request
 
-The request can contain the following query parameters:
-
-- `isAvailable` - boolean flag that indicates if we are intereseted only in available white diamonds (avaible = not sold, not sent to lab or factory)
+The request can contain a query parameter `?isAvailable=True` to show only available items.
 
 #### Response
 
@@ -137,14 +113,10 @@ The response body contains a JSON array with the following properties:
 - `itemType` - The type (white diamond/colored diamond/gemstone/jewelry) of the item
 - `stockName` - The stock name of the item
 - `purchaseDate` - When item has been bought
-- `supplier` - The name of the counterparty that sold it
-- `responsibleOffice` - The name of the office that moved (transfered) an item last time
-- `isAvailable` - Availability
 
 #### Status codes
 
 - `200` (OK) - The items have been successfully retrieved
-- `401` (Unauthorized) - The user is not logged in.
 
 
 ### Get item's details
@@ -161,7 +133,7 @@ The request path must contain the ID of the item.
 
 The response body contains a JSON object with various properties that depend on the kind of item it represents.
 
-It has commun part:
+It has common part:
 
 - `itemId` - The unique identifier of the item.
 - `stockName` - The stock name of the item
@@ -204,31 +176,67 @@ If item represents colored gemstone then it contains:
 - `width` - The width of the diamond
 - `depth` - The depth of the diamond
 - `gemType` - The type of the gemstone
-- `gemColor` - The colore of the gemstone
+- `gemColor` - The color of the gemstone
 - `treatment` - The treatment the gemstone has undergone
-
-If item represents jewelry then it contains:
-
-- `jewelryType` - The type of the jewelry (Ring/Necklace/Earrings/etc.)
-- `grossWeightGr` - The weight in grams of the jewelry
-- `metalType` - The type of the metal
-- `metalWeightGr` - The weight of the metal in grams
-- `totalCenterStoneQty` - The quantity of the center stones
-- `totalCenterStoneWeightCt` - The weight in carats of the center stones
-- `centerStoneType` - The type of the center stones
-- `totalSideStoneQty` - The quantity of the side stones
-- `totalSideStoneWeightCt` - The weight in carats of the side stones
-- `sideStoneType` - The type of the side stones
 
 #### Status codes
 
 - `200` (OK) - The item has been successfully retrieved.
 - `404` (Not Found) - The item does not exist.
 
+### Update white diamond
+
+- `PATCH /white-diamond/{id}`
+
+User must be logged in and has corresponding role to edit item's info.
+Item's type cannot be updated, since it would harm all underlying database structure.
+
+#### Request
+
+The request path must contain the ID of the item.
+The request body must contain a JSON object with the properties to update.
+
+#### Response
+
+The response contains updated `WhiteDiamond`
+
+#### Status codes
+
+- `201` (OK) - The item has been successfully updated.
+- `400` (Bad Request) - The request body is invalid.
+- `401` (Unauthorized) - The user is not logged in.
+- `404` (Not Found) - The item does not exist.
+
+---
+
+### Update item's info
+
+- `PATCH /items/{id}`
+
+User must be logged in and has corresponding role to edit item's info.
+Item's type cannot be updated, since it would harm all underlying database structure.
+
+#### Request
+
+The request path must contain the ID of the item.
+The request body must contain a JSON object with the properties to update.
+
+#### Response
+
+The response has no body.
+
+#### Status codes
+
+- `200` (OK) - The item has been successfully updated.
+- `400` (Bad Request) - The request body is invalid.
+- `401` (Unauthorized) - The user is not logged in.
+- `404` (Not Found) - The item does not exist.
+
+---
 
 ### Get all the stages in item's lifecycle
 
-- `PUT /lifecycle/{id}`
+- `GET /lifecycle/{id}`
 
 User must be logged in to access this API point.
 Get all the stages (purchase/transfers/sale) in item's lifecycle.
@@ -260,30 +268,6 @@ Each transfer has the following properties:
 - `404` (Not Found) - The item does not exist.
 
 
-### Update item's info
-
-- `PATCH /items/{id}`
-
-User must be logged in and has corresponding role to edit item's info.
-Item's type cannot be updated, since it would harm all underlying database structure.
-
-#### Request
-
-The request path must contain the ID of the item.
-The request body must contain a JSON object with the properties to update.
-
-#### Response
-
-The response has no body.
-
-#### Status codes
-
-- `200` (OK) - The item has been successfully updated.
-- `400` (Bad Request) - The request body is invalid.
-- `401` (Unauthorized) - The user is not logged in.
-- `404` (Not Found) - The item does not exist.
-
-
 ### Create a new transfer
 
 - `POST /transfers`
@@ -295,19 +279,17 @@ Registers new transfer in the system and ties items to it.
 
 The request body must contain a JSON object with the following properties:
 
-- `transferType` - The type (purchase/transfer to office/transfer to lab/return from lab/transfer to factory/return from factory/sale) of the transfer
-- `transferNum` - The number used to indentify delivery
+- `transferType` - The type (purchase,transfer or sale) of the transfer
+- `transferNum` - The number used to identify delivery
 - `fromCounterpart` - The name of the counterparty that did the transfer
 - `toCounterpart` - The name of the counterparty that received the transfer
 - `shipDate` - Date when transfer has been done
-- `expectedReturnDate` - If it is return-style transfer then this represents date when item should arrived back
-- `originalTransferId` - If it is return-style transfer then this represents id of corresponding transfer that has been used to send an item in the first place
 - `terms` - The terms of the transfer
 - `remarks` - Additional remarks
 
 #### Response
 
-The response contains no body.
+The response contains nothing.
 
 #### Status codes
 
@@ -317,95 +299,24 @@ The response contains no body.
 - `409` (Conflict) - The transfer violates business rules.
 
 
-### Get all existing counterparties
+### Delete transfer by id
 
-- `GET /counterparties`
+- `DELETE /transfers/{id}`
 
-User must be logged-in.
-Retrieves all the registered counterparties.
+User must be logged in.
+If transfer of interest is the last one for certain item it can be removed.
 
 #### Request
 
-The request contains no body.
+The request contains nothing.
 
 #### Response
 
-The response body contains a JSON array with the following properties:
-
-- `counterpartId` - The unique id of the counterpart in the system
-- `counterpartName` - The counterpart's name
-- `city` - The city where its HQ located
-- `postalCode` - The postal code of the city
-- `country` - The counter where its HQ located
-- `isActive` - If it is active in the system or it has been archived due to various reasons
-- `accountTypes` - is array of different roles that counterpart could play: client, supplier, manufacturer, office
+The response contains nothing.
 
 #### Status codes
 
-- `200` (OK) - The counterparties list has been successfully retrieved.
-- `401` (Unauthorized) - The user is not logged in.
-
-
-### Add a new counterpart
-
-- `POST /counterparties`
-
-User must be logged-in and have admin-level privileges.
-Creates a new counterpart.
-
-#### Request
-
-The request body must containt a JSON object with the following properties:
-
-- `counterpartName` - The counterpart's name
-- `phoneNumber` - The contact phone number
-- `city` - The city where its HQ located
-- `postalCode` - The postal code of the city
-- `country` - The counter where its HQ located
-- `email` - The contact email
-- `isActive` - If it is active in the system or it has been archived due to various reasons
-- `accountTypes` - is array of different roles that counterpart could play: client, supplier, manufacturer, office
-
-##### Response
-
-The response contains no body.
-
-#### Status codes
-
-- `201` (Created) - The counterparty has been successfully created.
+- `200` (Created) - The transfer has been successfully delete.
 - `400` (Bad Request) - The request body is invalid.
 - `401` (Unauthorized) - The user is not logged in.
-- `409` (Conflict) - The counterparty already exists.
-
-
-### Get counterpart's details
-
-- `GET /counterparties/{id}`
-
-User must be logged-in.
-Retreives all the info about certain counterpart.
-
-#### Request
-
-The request path must contain the ID of the counterpart.
-
-#### Response
-
-Response body contains the following fields:
-
-- `counterpartId` - The unique id of the counterpart in the system
-- `counterpartName` - The counterpart's name
-- `phoneNumber` - The contact phone number
-- `city` - The city where its HQ located
-- `postalCode` - The postal code of the city
-- `country` - The counter where its HQ located
-- `email` - The contact email
-- `isActive` - If it is active in the system or it has been archived due to various reasons
-- `accountTypes` - is array of different roles that counterpart could play: client, supplier, manufacturer, office
-
-#### Status codes
-
-- `200` (OK) - The counterparty has been successfully retrieved.
-- `401` (Unauthorized) - The user is not logged in.
-
 

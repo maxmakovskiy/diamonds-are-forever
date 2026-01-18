@@ -1,5 +1,6 @@
 package ch.heigvd.dai;
 
+import ch.heigvd.dai.database.Database;
 import ch.heigvd.dai.item.Item;
 import ch.heigvd.dai.item.ItemDao;
 import com.fasterxml.jackson.databind.SerializationFeature;
