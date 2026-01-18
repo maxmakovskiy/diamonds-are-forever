@@ -1,3 +1,9 @@
+networks:
+  diamonds-network:
+
+volumes:
+  db-data:
+
 services:
   diamonds:
     build:
@@ -5,5 +11,29 @@ services:
       dockerfile: ./compose/diamonds/Dockerfile
     image: diamonds_local_javalin
     container_name: diamonds_local_javalin
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    networks:
+      - diamonds-network
     ports:
       - 8080:8080
+
+  postgresql:
+    image: 'postgres:18'
+    networks:
+      - diamonds-network
+    environment:
+      - POSTGRES_USER=diamonds
+      - POSTGRES_PASSWORD=diamonds
+      - POSTGRES_DB=diamonds
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d:ro
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U diamonds"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+
