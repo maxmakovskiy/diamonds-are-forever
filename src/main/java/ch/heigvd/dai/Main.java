@@ -1,7 +1,6 @@
 package ch.heigvd.dai;
 
-import static ch.heigvd.dai.Session.fileSessionHandler;
-import static ch.heigvd.dai.controllers.AuthController.USER_ROLE;
+import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 
 import ch.heigvd.dai.controllers.AuthController;
 import ch.heigvd.dai.controllers.ItemController;
@@ -28,16 +27,19 @@ public class Main {
                                                                     .disable(
                                                                             SerializationFeature
                                                                                     .WRITE_DATES_AS_TIMESTAMPS)));
-                            config.jetty.modifyServletContextHandler(
-                                    handler -> handler.setSessionHandler(fileSessionHandler()));
+                            //                            config.jetty.modifyServletContextHandler(
+                            //                                    handler ->
+                            // handler.setSessionHandler(fileSessionHandler()));
                         });
 
         app.beforeMatched(
                 "/items",
                 ctx -> {
                     if (ctx.method() == HandlerType.POST) {
-                        String role = ctx.sessionAttribute(USER_ROLE);
-                        if (role == ctx.cookie()) {
+                        System.out.println("Checking user session...");
+                        String id = ctx.sessionAttribute(USER_ID);
+                        System.out.println("Found : " + String.valueOf(id));
+                        if (id == null) {
                             throw new UnauthorizedResponse();
                         }
                     }

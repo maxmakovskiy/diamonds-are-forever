@@ -34,6 +34,7 @@ curl -i \
 ```bash
 curl -i \
   -X POST \
+  --cookie [put you cookie here] \
   http://localhost:8080/sign-out
 ```
 

@@ -7,11 +7,11 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.UnauthorizedResponse;
 import io.javalin.http.util.NaiveRateLimit;
+import jakarta.servlet.http.HttpSession;
 import java.util.concurrent.TimeUnit;
 
 public class AuthController {
     public static final String USER_ID = "USER_ID";
-    public static final String USER_ROLE = "USER_ROLE";
 
     public void login(Context ctx) {
         NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS);
@@ -27,7 +27,6 @@ public class AuthController {
 
         if (user != null) {
             ctx.sessionAttribute(USER_ID, String.valueOf(user.employeeId));
-            ctx.sessionAttribute(USER_ROLE, String.valueOf(user.role));
             ctx.status(HttpStatus.NO_CONTENT);
             return;
         }
@@ -36,7 +35,12 @@ public class AuthController {
     }
 
     public void logout(Context ctx) {
-        ctx.req().getSession().invalidate();
+        System.out.println("Trying to logout...");
+        HttpSession s = ctx.req().getSession(false);
+        if (s != null) {
+            System.out.println("Calling HttpSession.invalidate()");
+            s.invalidate();
+        }
         ctx.status(HttpStatus.NO_CONTENT);
     }
 
