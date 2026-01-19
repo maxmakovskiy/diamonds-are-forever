@@ -41,5 +41,4 @@ public class AuthController {
         }
         ctx.status(HttpStatus.NO_CONTENT);
     }
-
 }
