@@ -9,6 +9,8 @@ import io.javalin.http.ConflictResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import java.util.List;
+import java.util.Objects;
+
 import org.jdbi.v3.core.Handle;
 
 public class ActionController {
@@ -96,6 +98,32 @@ public class ActionController {
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
             ActionDao actionDao = handle.attach(ActionDao.class);
+
+            // check that action.category is suitable next action
+            // for item with lotId = action.lotId
+            List<Action> prevActions = actionDao.getActionsForItem(action.lotId);
+            if (!prevActions.isEmpty()) {
+                Action lastAction = prevActions.getFirst();
+
+                // NOTE:
+                // Obviously there are many combinations
+                // for sake of simplicity we would check just a couple
+                boolean isAnythingAfterSale = Objects.equals(lastAction.category, "sale");
+                boolean isDoublePurchase = Objects.equals(action.category, "purchase")
+                        && Objects.equals(lastAction.category, "purchase");
+                boolean isDoubleFactoryTransfer = Objects.equals(action.category, "transfer to factory")
+                        && Objects.equals(lastAction.category, "transfer to factory");
+                boolean isDoubleLabTransfer = Objects.equals(action.category, "transfer to lab")
+                        && Objects.equals(lastAction.category, "transfer to lab");
+                // transfer to office can be double since there is no return-action for it
+
+                if (isAnythingAfterSale || isDoublePurchase ||
+                    isDoubleFactoryTransfer || isDoubleLabTransfer) {
+                    // cant be purchase after sale
+                    throw new ConflictResponse();
+                }
+            }
+
             Action createdAction = actionDao.createAction(action);
             ctx.json(createdAction);
             ctx.status(200);
