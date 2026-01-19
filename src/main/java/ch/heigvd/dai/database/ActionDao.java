@@ -58,4 +58,39 @@ public interface ActionDao {
             """)
     @GetGeneratedKeys
     Action updateAction(@BindFields Action action);
+
+    @SqlUpdate(
+            """
+            DELETE FROM diamonds_are_forever.action
+            WHERE actionId = :actionId
+            """)
+    void deleteActionById(@Bind("actionId") int actionId);
+
+    @SqlUpdate(
+            """
+            INSERT INTO diamonds_are_forever.action (
+                fromCounterpartId,
+                toCounterpartId,
+                terms,
+                category,
+                shipNum,
+                shipDate,
+                lotId,
+                employeeId,
+                price,
+                currencyCode
+            ) VALUES (
+                :fromCounterpartId,
+                :toCounterpartId,
+                :terms,
+                cast(:category as diamonds_are_forever.transfer_category),
+                :shipNum,
+                :shipDate,
+                :lotId,
+                :employeeId,
+                :price,
+                cast(:currencyCode as diamonds_are_forever.code)
+            """)
+    @GetGeneratedKeys
+    Action createAction(@BindFields Action action);
 }

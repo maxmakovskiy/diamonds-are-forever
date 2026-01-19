@@ -61,4 +61,45 @@ public class ActionController {
             ctx.status(200);
         }
     }
+
+    public void delete(Context ctx) {
+        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        try (Handle handle = Database.getInstance().jdbi.open()) {
+            ActionDao actionDao = handle.attach(ActionDao.class);
+
+            Action existingAction = actionDao.getActionById(id);
+            if (existingAction == null) {
+                throw new NotFoundResponse();
+            }
+
+            List<Action> itemActions = actionDao.getActionsForItem(existingAction.lotId);
+            if (itemActions.getFirst().actionId != existingAction.actionId) {
+                throw new ConflictResponse();
+            }
+            actionDao.deleteActionById(id);
+            ctx.status(200);
+        }
+    }
+
+    public void create(Context ctx) {
+        Action action = ctx.bodyValidator(Action.class)
+                .check(obj -> obj.fromCounterpartId > 0, "Missing source counterpart")
+                .check(obj -> obj.toCounterpartId > 0, "Missing destination counterpart")
+                .check(obj -> obj.category != null, "Missing category")
+                .check(obj -> obj.shipNum != null, "Missing shipment number")
+                .check(obj -> obj.lotId > 0, "Missing lot id")
+                .check(obj -> obj.employeeId > 0, "Missing employee id")
+                .check(obj -> obj.price >= 0, "Incorrect price")
+                .check(obj -> obj.currencyCode != null, "Missing currency code")
+                .get();
+
+        try (Handle handle = Database.getInstance().jdbi.open()) {
+            ActionDao actionDao = handle.attach(ActionDao.class);
+            Action createdAction = actionDao.createAction(action);
+            ctx.json(createdAction);
+            ctx.status(200);
+        }
+    }
+
 }
