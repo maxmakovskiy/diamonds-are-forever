@@ -7,15 +7,15 @@ curl -i \
   http://localhost:8080/items
 ```
 
-### Create a new item
+### Create a new white diamond
 
 ```bash
 curl -i \
   -X POST \
   --cookie [put you cookie here] \
   -H "Content-Type: application/json" \
-  -d '{"stockName":"WD-2024-090","purchaseDate":"2026-01-16T10:15:30+01:00","origin":"South Africa","type":"white diamond"}' \
-  http://localhost:8080/items
+  -d '{"stockName":"WD-2024-090","purchaseDate":"2026-01-16T10:15:30+01:00","origin":"South Africa","type":"white diamond", "weightCt":"1.52", "shape":"Brilliant Cut", "length":"7.45", "width":"7.42", "depth":"4.58", "whiteScale":"F", "clarity":"VS1"}' \
+  http://localhost:8080/white-diamond
 ```
 
 ### Login
@@ -36,5 +36,14 @@ curl -i \
   -X POST \
   --cookie [put you cookie here] \
   http://localhost:8080/sign-out
+```
+
+
+### White Diamond
+
+```bash
+curl -i \
+  -X GET \
+  http://localhost:8080/white-diamond/{id}
 ```
 

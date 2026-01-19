@@ -6,6 +6,7 @@ import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 import ch.heigvd.dai.controllers.AuthController;
 import ch.heigvd.dai.controllers.ItemController;
 import ch.heigvd.dai.controllers.Role;
+import ch.heigvd.dai.controllers.WhiteDiamondController;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
@@ -42,13 +43,16 @@ public class Main {
                     }
                 });
 
-        ItemController itemController = new ItemController();
         AuthController authController = new AuthController();
-
-        app.get("/items", itemController::getAllItems, Role.ANYONE);
-        app.post("/items", itemController::createItem, Role.AUTHENTICATED);
         app.post("/sign-in", authController::login, Role.ANYONE);
         app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
+
+        ItemController itemController = new ItemController();
+        app.get("/items", itemController::getAllItems, Role.ANYONE);
+
+        WhiteDiamondController wd = new WhiteDiamondController();
+        app.get("/white-diamond/{id}", wd::getOne, Role.ANYONE);
+        app.post("/white-diamond", wd::create, Role.AUTHENTICATED);
 
         app.start(PORT);
     }
