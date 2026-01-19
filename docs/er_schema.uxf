@@ -1,0 +1,194 @@
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>540</x><y>360</y><w>126</w><h>153</h></coordinates><panel_attributes>Action
+--
+_action_id_
+terms
+remarks
+created_at
+updated_at
+category
+transfer_num
+transfer_date
+
+
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>549</x><y>261</y><w>90</w><h>117</h></coordinates><panel_attributes>lt=-
+m1=1..1
+m2=0..*
+arrived to ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1485</x><y>288</y><w>126</w><h>162</h></coordinates><panel_attributes>Item
+--
+_lot_id_
+stock_name
+purchase_date
+supplier_id
+origin
+responsible_office_id
+is_available
+created_at
+updated_at
+item_type
+
+
+ 
+
+
+
+	
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1314</x><y>693</y><w>90</w><h>90</h></coordinates><panel_attributes>Diamond
+--
+clarity
+
+	
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1503</x><y>693</y><w>108</w><h>108</h></coordinates><panel_attributes>Colored Gem Stone
+--
+gem_type
+gem_color
+treatment</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1224</x><y>837</y><w>108</w><h>108</h></coordinates><panel_attributes>White Diamond
+--
+white_level
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1359</x><y>837</y><w>144</w><h>108</h></coordinates><panel_attributes>Colored Diamond
+--
+gem_tpy
+color
+	fancy_intensity:
+	fancy_overton
+	fancy_color
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1350</x><y>630</y><w>126</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>120;10;120;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1440</x><y>657</y><w>135</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>130;40;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1278</x><y>774</y><w>99</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;90;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1350</x><y>801</y><w>108</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>100;40;100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>540</x><y>54</y><w>135</w><h>216</h></coordinates><panel_attributes>Counterpart
+--
+_counterpart_id_
+name
+phone_number
+address
+	adress_short
+	city
+	postal_code
+	country
+contact_email
+category
+is_active
+created_at
+updated_at
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1449</x><y>441</y><w>117</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>110;10;110;60;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1539</x><y>486</y><w>117</w><h>27</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1404</x><y>531</y><w>99</w><h>108</h></coordinates><panel_attributes>Loose Stone
+--
+weight_ct
+shape
+measurement
+	length
+	width
+	depth
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1449</x><y>486</y><w>27</w><h>63</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1566</x><y>513</y><w>171</w><h>171</h></coordinates><panel_attributes>Jewellery
+--
+jewellery_type
+gross_weight_gr
+metal_type
+metal_weight_gr
+total_centre_stone_qty
+total_centered_stone_weight_ct
+centered_stone_type
+total_side_stone_qty
+total_side_stone_weight_ct
+side_stone_type
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1629</x><y>486</y><w>27</w><h>45</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1548</x><y>468</y><w>108</w><h>27</h></coordinates><panel_attributes>disjoint, total
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>207</x><y>81</y><w>135</w><h>162</h></coordinates><panel_attributes>User
+--
+_user_id_
+first_name
+last_name
+email
+password_hash
+role
+is_active
+created_at
+updated_at
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>108</y><w>225</w><h>45</h></coordinates><panel_attributes>lt=-
+m1=1..1
+m2=0..*
+works for &gt;</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>783</x><y>459</y><w>135</w><h>72</h></coordinates><panel_attributes>Currency
+--
+_Code_
+name</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>639</x><y>261</y><w>99</w><h>117</h></coordinates><panel_attributes>lt=-
+m1=1..1
+m2=0..*
+arrived from ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>261</x><y>234</y><w>297</w><h>243</h></coordinates><panel_attributes>lt=-
+m1=1..1
+m2=0..*
+triggered by ^</panel_attributes><additional_attributes>20;10;20;240;310;240</additional_attributes></element><element><id>Relation</id><coordinates><x>657</x><y>405</y><w>846</w><h>36</h></coordinates><panel_attributes>lt=-
+m1=1..1
+m2=0..*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1638</x><y>135</y><w>171</w><h>135</h></coordinates><panel_attributes>1) responsible_office_id is precomputed from appropiet action
+2) supplier_id should be an id of the same counterpart from Purchase who sold an item to us
+3) jewerly does not have a dedicated certificate
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>999</x><y>459</y><w>135</w><h>72</h></coordinates><panel_attributes>Action Item
+--
+price</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1053</x><y>405</y><w>27</w><h>72</h></coordinates><panel_attributes>lt=.
+
+</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>909</x><y>495</y><w>108</w><h>36</h></coordinates><panel_attributes>lt=-
+m1=0..*
+m2=1..1</panel_attributes><additional_attributes>100;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>702</x><y>0</y><w>171</w><h>72</h></coordinates><panel_attributes>Category of account type could be: Supplier, Client, Office, Lab, Manufacturer
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1197</x><y>198</y><w>261</w><h>99</h></coordinates><panel_attributes>Item Integrity Constraints:
+1) updated_at &gt;= created_at
+2) supplier_id should point to the counterpart which posses "supplier" category
+3) responsible_office_id should point to the counterpart which posses "office" category
+
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>0</x><y>27</y><w>171</w><h>72</h></coordinates><panel_attributes>Employee has next roles: Chief, Admin, Sales, Accountant
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>0</x><y>108</y><w>171</w><h>117</h></coordinates><panel_attributes>Employee integrity constraints:
+1) An employee can works only for the counterpart which
+has an integral account type
+2) updated_at &gt;= created_at
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>666</x><y>63</y><w>54</w><h>72</h></coordinates><panel_attributes>lt=.
+
+</panel_attributes><additional_attributes>40;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1602</x><y>261</y><w>54</w><h>45</h></coordinates><panel_attributes>lt=.
+
+</panel_attributes><additional_attributes>40;10;10;30</additional_attributes></element><element><id>UMLNote</id><coordinates><x>882</x><y>333</y><w>207</w><h>54</h></coordinates><panel_attributes>Action Item Integrity Constraints:
+1) price &gt;= 0
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1242</x><y>531</y><w>153</w><h>108</h></coordinates><panel_attributes>Loose Stone Integrity Constraints:
+1) weight_ct &gt; 0
+2) length &gt; 0
+3) width &gt; 0 
+4) depth &gt; 0
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1665</x><y>351</y><w>243</w><h>108</h></coordinates><panel_attributes>Jewellery Integrity Constraints:
+
+1) gross_weight_gr &gt; 0 
+2) metal_weight_gr &gt; 0
+2) metal_weight_gr &lt;= gross_weight_gr
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>
