@@ -1,13 +1,14 @@
 package ch.heigvd.dai;
 
+import static ch.heigvd.dai.Session.fileSessionHandler;
 import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 
 import ch.heigvd.dai.controllers.AuthController;
 import ch.heigvd.dai.controllers.ItemController;
+import ch.heigvd.dai.controllers.Role;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
-import io.javalin.http.HandlerType;
 import io.javalin.http.UnauthorizedResponse;
 import io.javalin.json.JavalinJackson;
 
@@ -27,18 +28,14 @@ public class Main {
                                                                     .disable(
                                                                             SerializationFeature
                                                                                     .WRITE_DATES_AS_TIMESTAMPS)));
-                            //                            config.jetty.modifyServletContextHandler(
-                            //                                    handler ->
-                            // handler.setSessionHandler(fileSessionHandler()));
+                            config.jetty.modifyServletContextHandler(
+                                    handler -> handler.setSessionHandler(fileSessionHandler()));
                         });
 
         app.beforeMatched(
-                "/items",
                 ctx -> {
-                    if (ctx.method() == HandlerType.POST) {
-                        System.out.println("Checking user session...");
+                    if (ctx.routeRoles().contains(Role.AUTHENTICATED)) {
                         String id = ctx.sessionAttribute(USER_ID);
-                        System.out.println("Found : " + String.valueOf(id));
                         if (id == null) {
                             throw new UnauthorizedResponse();
                         }
@@ -48,10 +45,10 @@ public class Main {
         ItemController itemController = new ItemController();
         AuthController authController = new AuthController();
 
-        app.get("/items", itemController::getAllItems);
-        app.post("/items", itemController::createItem);
-        app.post("/sign-in", authController::login);
-        app.post("/sign-out", authController::logout);
+        app.get("/items", itemController::getAllItems, Role.ANYONE);
+        app.post("/items", itemController::createItem, Role.AUTHENTICATED);
+        app.post("/sign-in", authController::login, Role.ANYONE);
+        app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
 
         app.start(PORT);
     }

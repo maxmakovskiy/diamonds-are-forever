@@ -44,21 +44,21 @@ public class AuthController {
         ctx.status(HttpStatus.NO_CONTENT);
     }
 
-    //    public void profile(Context ctx) {
-    //        String userIdCookie = ctx.cookie("user");
-    //
-    //        if (userIdCookie == null) {
-    //            throw new UnauthorizedResponse();
-    //        }
-    //
-    //        Integer userId = Integer.parseInt(userIdCookie);
-    //
-    //        Employee user = users.get(userId);
-    //
-    //        if (user == null) {
-    //            throw new UnauthorizedResponse();
-    //        }
-    //
-    //        ctx.json(user);
-    //    }
+//        public void profile(Context ctx) {
+//            String userIdCookie = ctx.cookie("user");
+//
+//            if (userIdCookie == null) {
+//                throw new UnauthorizedResponse();
+//            }
+//
+//            Integer userId = Integer.parseInt(userIdCookie);
+//
+//            Employee user = users.get(userId);
+//
+//            if (user == null) {
+//                throw new UnauthorizedResponse();
+//            }
+//
+//            ctx.json(user);
+//        }
 }
