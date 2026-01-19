@@ -57,6 +57,14 @@ curl -i \
   http://localhost:8080/white-diamonds/{id}
 ```
 
+### Get details of a colored diamond
+
+```bash
+curl -i \
+  -X GET \
+  http://localhost:8080/colored-diamonds/{id}
+```
+
 ---
 
 ### Get actions for an item (lifecycle) by id

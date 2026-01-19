@@ -12,8 +12,14 @@ import org.jdbi.v3.core.Handle;
 public class WhiteDiamondController {
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
         WhiteDiamondDao dao = Database.getInstance().jdbi.onDemand(WhiteDiamondDao.class);
         WhiteDiamond wd = dao.findByLotId(id);
+
+        if (wd == null) {
+            throw new NotFoundResponse();
+        }
+
         ctx.json(wd);
         ctx.status(200);
     }
@@ -29,9 +35,6 @@ public class WhiteDiamondController {
             wdDao.insertWhiteDiamond(item);
 
             ctx.status(201);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            ctx.status(500);
         }
     }
 

@@ -52,6 +52,9 @@ public class Main {
         app.put("/white-diamonds/{id}", wd::update, Role.ANYONE);
         app.post("/white-diamonds", wd::create, Role.AUTHENTICATED);
 
+        ColoredDiamondController cd = new ColoredDiamondController();
+        app.get("/colored-diamonds/{id}", cd::getOne, Role.ANYONE);
+
         ActionController ac = new ActionController();
         app.get("/lifecycle/{id}", ac::getAllForItem, Role.ANYONE);
 
