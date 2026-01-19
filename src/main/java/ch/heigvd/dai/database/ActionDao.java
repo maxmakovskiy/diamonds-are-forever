@@ -18,7 +18,7 @@ public interface ActionDao {
             WHERE lotId = :lotId
             ORDER BY createdAt
             """)
-    List<Action> getActionForItem(@Bind("lotId") int lotId);
+    List<Action> getActionsForItem(@Bind("lotId") int lotId);
 
     @SqlQuery(
             """

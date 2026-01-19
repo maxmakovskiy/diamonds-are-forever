@@ -5,6 +5,7 @@ import ch.heigvd.dai.database.Database;
 import ch.heigvd.dai.database.ItemDao;
 import ch.heigvd.dai.models.Action;
 import ch.heigvd.dai.models.Item;
+import io.javalin.http.ConflictResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ActionController {
             }
 
             ActionDao actionDao = handle.attach(ActionDao.class);
-            List<Action> actions = actionDao.getActionForItem(id);
+            List<Action> actions = actionDao.getActionsForItem(id);
             ctx.json(actions);
             ctx.status(200);
         }
@@ -38,6 +39,12 @@ public class ActionController {
             Action existingAction = actionDao.getActionById(id);
             if (existingAction == null) {
                 throw new NotFoundResponse();
+            }
+
+            List<Action> itemActions = actionDao.getActionsForItem(existingAction.lotId);
+            // we do getFirst since getActionsForItem return actions ordered by creation date in descending manner
+            if (itemActions.getFirst().actionId != existingAction.actionId) {
+                throw new ConflictResponse();
             }
 
             // TODO:
