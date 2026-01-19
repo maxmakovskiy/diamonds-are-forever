@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import org.jdbi.v3.sqlobject.config.RegisterFieldMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.customizer.BindFields;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -32,4 +33,17 @@ public interface ItemDao {
     @SqlQuery("SELECT * FROM diamonds_are_forever.item ORDER BY purchaseDate")
     @RegisterFieldMapper(Item.class)
     List<Item> getAllItems();
+
+    @SqlUpdate(
+            """
+            UPDATE diamonds_are_forever.item
+            SET (
+                stockName,
+                purchaseDate,
+                origin,
+                updatedAt
+            ) = (:stockName, :purchaseDate, :origin, NOW())
+            WHERE lotId = :lotId
+            """)
+    void updateItem(@BindFields Item item);
 }

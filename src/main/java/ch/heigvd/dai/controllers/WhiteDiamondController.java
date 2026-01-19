@@ -3,8 +3,10 @@ package ch.heigvd.dai.controllers;
 import ch.heigvd.dai.database.Database;
 import ch.heigvd.dai.database.ItemDao;
 import ch.heigvd.dai.database.WhiteDiamondDao;
+import ch.heigvd.dai.models.Item;
 import ch.heigvd.dai.models.WhiteDiamond;
 import io.javalin.http.Context;
+import org.jdbi.v3.core.Handle;
 
 public class WhiteDiamondController {
     public void getOne(Context ctx) {
@@ -16,21 +18,53 @@ public class WhiteDiamondController {
     }
 
     public void create(Context ctx) {
-        WhiteDiamondDao wdDao = Database.getInstance().jdbi.onDemand(WhiteDiamondDao.class);
-        ItemDao itemDao = Database.getInstance().jdbi.onDemand(ItemDao.class);
+        try (Handle handle = Database.getInstance().jdbi.open()) {
+            WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+            ItemDao itemDao = handle.attach(ItemDao.class);
 
-        WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
-        item.lotId = itemDao.insertItem(item.stockName, item.purchaseDate, item.origin, item.type);
-        wdDao.insertWhiteDiamond(item);
-        ctx.status(201);
+            WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
+            item.lotId =
+                    itemDao.insertItem(item.stockName, item.purchaseDate, item.origin, item.type);
+            wdDao.insertWhiteDiamond(item);
+
+            ctx.status(201);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            ctx.status(500);
+        }
     }
 
-    //        public void update(Context ctx) {
-    //            ctx.status(200);
-    //        }
-    //
-    //        public void delete(Context ctx) {
-    //            ctx.status(200);
-    //        }
+    public void update(Context ctx) {
+        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
 
+        try (Handle handle = Database.getInstance().jdbi.open()) {
+            WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+            ItemDao itemDao = handle.attach(ItemDao.class);
+
+            WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
+            itemDao.updateItem(
+                    new Item(
+                            id,
+                            wd.stockName,
+                            wd.purchaseDate,
+                            wd.origin,
+                            wd.type,
+                            wd.createdAt,
+                            wd.updatedAt));
+            wdDao.updateWhiteDiamond(
+                    id,
+                    wd.weightCt,
+                    wd.shape,
+                    wd.length,
+                    wd.width,
+                    wd.depth,
+                    wd.whiteScale,
+                    wd.clarity);
+
+            ctx.status(200);
+        } catch (Exception e) {
+            System.out.println("ERR: " + e.getMessage());
+            ctx.status(500);
+        }
+    }
 }

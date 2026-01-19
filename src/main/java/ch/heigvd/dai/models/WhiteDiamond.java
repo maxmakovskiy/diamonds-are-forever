@@ -17,4 +17,18 @@ public class WhiteDiamond {
     public double depth;
     public String whiteScale;
     public String clarity;
+
+    @Override
+    public String toString() {
+        return "White diamond: "
+                + String.join(
+                        ", ",
+                        String.valueOf(weightCt),
+                        shape,
+                        String.valueOf(length),
+                        String.valueOf(width),
+                        String.valueOf(depth),
+                        whiteScale,
+                        clarity);
+    }
 }

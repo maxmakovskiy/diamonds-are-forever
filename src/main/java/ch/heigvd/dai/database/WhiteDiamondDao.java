@@ -22,6 +22,7 @@ public interface WhiteDiamondDao {
                 weightCt,
                 shape,
                 length,
+                width,
                 depth,
                 whiteScale,
                 clarity
@@ -50,9 +51,40 @@ public interface WhiteDiamondDao {
                     :length,
                     :width,
                     :depth,
-                    :whiteScale,
-                    :clarity
+                    cast(:whiteScale as diamonds_are_forever.white_scale),
+                    cast(:clarity as diamonds_are_forever.clarity)
                 )
             """)
     void insertWhiteDiamond(@BindFields WhiteDiamond wd);
+
+    @SqlUpdate(
+            """
+                UPDATE diamonds_are_forever.white_diamond
+                SET (
+                    weightCt,
+                    shape,
+                    length,
+                    width,
+                    depth,
+                    whiteScale,
+                    clarity
+                ) = (
+                    :weightCt,
+                    cast(:shape as diamonds_are_forever.shape),
+                    :length,
+                    :width,
+                    :depth,
+                    cast(:whiteScale as diamonds_are_forever.white_scale),
+                    cast(:clarity as diamonds_are_forever.clarity)
+                ) WHERE lotId = :lotId
+            """)
+    void updateWhiteDiamond(
+            @Bind("lotId") int lotId,
+            @Bind("weightCt") double weightCt,
+            @Bind("shape") String shape,
+            @Bind("length") double length,
+            @Bind("width") double width,
+            @Bind("depth") double depth,
+            @Bind("whiteScale") String whiteScale,
+            @Bind("clarity") String clarity);
 }

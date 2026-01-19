@@ -51,8 +51,9 @@ public class Main {
         app.get("/items", itemController::getAllItems, Role.ANYONE);
 
         WhiteDiamondController wd = new WhiteDiamondController();
-        app.get("/white-diamond/{id}", wd::getOne, Role.ANYONE);
-        app.post("/white-diamond", wd::create, Role.AUTHENTICATED);
+        app.get("/white-diamonds/{id}", wd::getOne, Role.ANYONE);
+        app.put("/white-diamonds/{id}", wd::update, Role.ANYONE);
+        app.post("/white-diamonds", wd::create, Role.AUTHENTICATED);
 
         app.start(PORT);
     }
