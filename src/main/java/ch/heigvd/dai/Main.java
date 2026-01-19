@@ -65,8 +65,10 @@ public class Main {
         ColoredGemstoneController coloredGemstoneController = new ColoredGemstoneController();
         app.get("/colored-gemstones/{id}", coloredGemstoneController::getOne, Role.ANYONE);
 
-        ActionController ac = new ActionController();
-        app.get("/lifecycle/{id}", ac::getAllForItem, Role.ANYONE);
+        ActionController actionController = new ActionController();
+        app.get("/items/lifecycle/{id}", actionController::getAllForItem, Role.ANYONE);
+        app.put("/actions/{id}", actionController::update, Role.AUTHENTICATED);
+        //        app.delete("/lifecycle/{id}", actionController::remove, Role.AUTHENTICATED);
 
         app.start(PORT);
     }

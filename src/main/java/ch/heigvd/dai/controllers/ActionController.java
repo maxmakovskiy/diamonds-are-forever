@@ -28,4 +28,30 @@ public class ActionController {
             ctx.status(200);
         }
     }
+
+    public void update(Context ctx) {
+        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        try (Handle handle = Database.getInstance().jdbi.open()) {
+            ActionDao actionDao = handle.attach(ActionDao.class);
+
+            Action existingAction = actionDao.getActionById(id);
+            if (existingAction == null) {
+                throw new NotFoundResponse();
+            }
+
+            // TODO:
+            // Maybe before going to update an action
+            // we should if it's indeed different
+            // since querying DB is slow
+            Action incomingAction = ctx.bodyValidator(Action.class).get();
+            incomingAction.actionId = id;
+
+            Action a = actionDao.updateAction(incomingAction);
+
+            ctx.json(a);
+
+            ctx.status(200);
+        }
+    }
 }
