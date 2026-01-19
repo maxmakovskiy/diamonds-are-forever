@@ -6,6 +6,7 @@ import ch.heigvd.dai.database.WhiteDiamondDao;
 import ch.heigvd.dai.models.Item;
 import ch.heigvd.dai.models.WhiteDiamond;
 import io.javalin.http.Context;
+import io.javalin.http.NotFoundResponse;
 import org.jdbi.v3.core.Handle;
 
 public class WhiteDiamondController {
@@ -41,6 +42,10 @@ public class WhiteDiamondController {
             WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
 
+            if (wdDao.findByLotId(id) == null) {
+                throw new NotFoundResponse();
+            }
+
             WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
             itemDao.updateItem(
                     new Item(
@@ -62,9 +67,6 @@ public class WhiteDiamondController {
                     wd.clarity);
 
             ctx.status(200);
-        } catch (Exception e) {
-            System.out.println("ERR: " + e.getMessage());
-            ctx.status(500);
         }
     }
 }
