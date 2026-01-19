@@ -30,10 +30,6 @@ public interface ItemDao {
             @Bind("origin") String origin,
             @Bind("type") String type);
 
-    @SqlQuery("SELECT * FROM diamonds_are_forever.item ORDER BY purchaseDate")
-    @RegisterFieldMapper(Item.class)
-    List<Item> getAllItems();
-
     @SqlUpdate(
             """
             UPDATE diamonds_are_forever.item
@@ -46,4 +42,10 @@ public interface ItemDao {
             WHERE lotId = :lotId
             """)
     void updateItem(@BindFields Item item);
+
+    @SqlQuery("SELECT * FROM diamonds_are_forever.item ORDER BY purchaseDate")
+    List<Item> getAllItems();
+
+    @SqlQuery("SELECT * FROM diamonds_are_forever.item WHERE lotId = :lotId")
+    Item getItemByLotId(@Bind("lotId") int lotId);
 }

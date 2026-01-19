@@ -3,10 +3,7 @@ package ch.heigvd.dai;
 import static ch.heigvd.dai.Session.fileSessionHandler;
 import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 
-import ch.heigvd.dai.controllers.AuthController;
-import ch.heigvd.dai.controllers.ItemController;
-import ch.heigvd.dai.controllers.Role;
-import ch.heigvd.dai.controllers.WhiteDiamondController;
+import ch.heigvd.dai.controllers.*;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
@@ -54,6 +51,9 @@ public class Main {
         app.get("/white-diamonds/{id}", wd::getOne, Role.ANYONE);
         app.put("/white-diamonds/{id}", wd::update, Role.ANYONE);
         app.post("/white-diamonds", wd::create, Role.AUTHENTICATED);
+
+        ActionController ac = new ActionController();
+        app.get("/lifecycle/{id}", ac::getAllForItem, Role.ANYONE);
 
         app.start(PORT);
     }

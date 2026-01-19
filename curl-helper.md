@@ -8,7 +8,6 @@ curl -i \
   http://localhost:8080/sign-in
 ```
 
-
 ### Logout
 
 ```bash
@@ -56,6 +55,16 @@ curl -i \
   -H "Content-Type: application/json" \
   -d '{"stockName":"WD-2024-111","purchaseDate":"2026-01-16T10:15:30+01:00","origin":"South Africa","type":"white diamond", "weightCt":"1.52", "shape":"Brilliant Cut", "length":"7.45", "width":"7.42", "depth":"4.58", "whiteScale":"F", "clarity":"VS2"}' \
   http://localhost:8080/white-diamonds/{id}
+```
+
+---
+
+### Get actions for an item (lifecycle) by id
+
+```bash
+curl -i \
+  -X GET \
+  http://localhost:8080/lifecycle/{id}
 ```
 
 
