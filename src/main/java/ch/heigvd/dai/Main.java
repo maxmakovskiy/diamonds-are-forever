@@ -3,9 +3,7 @@ package ch.heigvd.dai;
 import static ch.heigvd.dai.Session.fileSessionHandler;
 import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 
-import ch.heigvd.dai.controllers.AuthController;
-import ch.heigvd.dai.controllers.ItemController;
-import ch.heigvd.dai.controllers.Role;
+import ch.heigvd.dai.controllers.*;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
@@ -42,13 +40,33 @@ public class Main {
                     }
                 });
 
-        ItemController itemController = new ItemController();
-        AuthController authController = new AuthController();
+        app.get(
+                "/",
+                ctx -> {
+                    ctx.redirect("/items");
+                },
+                Role.ANYONE);
 
-        app.get("/items", itemController::getAllItems, Role.ANYONE);
-        app.post("/items", itemController::createItem, Role.AUTHENTICATED);
+        AuthController authController = new AuthController();
         app.post("/sign-in", authController::login, Role.ANYONE);
         app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
+
+        ItemController itemController = new ItemController();
+        app.get("/items", itemController::getAllItems, Role.ANYONE);
+
+        WhiteDiamondController whiteDiamondController = new WhiteDiamondController();
+        app.get("/white-diamonds/{id}", whiteDiamondController::getOne, Role.ANYONE);
+        app.put("/white-diamonds/{id}", whiteDiamondController::update, Role.ANYONE);
+        app.post("/white-diamonds", whiteDiamondController::create, Role.AUTHENTICATED);
+
+        ColoredDiamondController coloredDiamondController = new ColoredDiamondController();
+        app.get("/colored-diamonds/{id}", coloredDiamondController::getOne, Role.ANYONE);
+
+        ColoredGemstoneController coloredGemstoneController = new ColoredGemstoneController();
+        app.get("/colored-gemstones/{id}", coloredGemstoneController::getOne, Role.ANYONE);
+
+        ActionController ac = new ActionController();
+        app.get("/lifecycle/{id}", ac::getAllForItem, Role.ANYONE);
 
         app.start(PORT);
     }

@@ -10,4 +10,23 @@ public class Item {
     public String type;
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
+
+    public Item() {}
+
+    public Item(
+            int lotId,
+            String stockName,
+            OffsetDateTime purchaseDate,
+            String origin,
+            String type,
+            OffsetDateTime createdAt,
+            OffsetDateTime updatedAt) {
+        this.lotId = lotId;
+        this.stockName = stockName;
+        this.purchaseDate = purchaseDate;
+        this.origin = origin;
+        this.type = type;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 }

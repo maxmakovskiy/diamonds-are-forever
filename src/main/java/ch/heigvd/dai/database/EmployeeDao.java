@@ -7,7 +7,6 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 @RegisterFieldMapper(Employee.class)
 public interface EmployeeDao {
-
     @SqlQuery(
             """
             SELECT * FROM diamonds_are_forever.employee
