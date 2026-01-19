@@ -69,6 +69,9 @@ public class WhiteDiamondController {
                     wd.whiteScale,
                     wd.clarity);
 
+            // TODO:
+            // Return updated WhiteDiamond
+            // example ActionController::update
             ctx.status(200);
         }
     }
