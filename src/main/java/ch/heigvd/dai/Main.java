@@ -68,7 +68,8 @@ public class Main {
         ActionController actionController = new ActionController();
         app.get("/items/lifecycle/{id}", actionController::getAllForItem, Role.ANYONE);
         app.put("/actions/{id}", actionController::update, Role.AUTHENTICATED);
-        //        app.delete("/lifecycle/{id}", actionController::remove, Role.AUTHENTICATED);
+        app.delete("/actions/{id}", actionController::delete, Role.AUTHENTICATED);
+        app.post("/actions", actionController::create, Role.AUTHENTICATED);
 
         app.start(PORT);
     }

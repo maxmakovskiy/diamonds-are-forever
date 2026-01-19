@@ -94,3 +94,25 @@ curl -i \
   -d '{"fromCounterpartId":5,"toCounterpartId":1,"terms":"Payment: 30 days net","category":"purchase","shipNum":"PO-2024-0001","shipDate":"2024-01-15","lotId":1,"employeeId":1,"price":13244.0,"currencyCode":"USD"}' \
   http://localhost:8080/actions/{id}
 ```
+
+
+### Create a new action
+
+```bash
+curl -i \
+  -X POST \
+  --cookie '[put your cookie here]' \
+  -H 'Content-Type: application/json' \
+  -d '{"fromCounterpartId":1,"toCounterpartId":17,"category":"transfer to lab","shipNum":"TTL-2024-0101","shipDate":"2024-02-10","lotId":1,"employeeId":1,"price":13244.0,"currencyCode":"USD"}' \
+  http://localhost:8080/actions/
+```
+
+### Delete an existing action
+
+```bash
+curl -i \
+  -X DELETE \
+  --cookie '[put your cookie here]' \
+  http://localhost:8080/actions/{id}
+```
+

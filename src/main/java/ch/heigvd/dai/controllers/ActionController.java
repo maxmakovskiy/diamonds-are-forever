@@ -43,9 +43,7 @@ public class ActionController {
             }
 
             List<Action> itemActions = actionDao.getActionsForItem(existingAction.lotId);
-            // we do getFirst since getActionsForItem return actions ordered by creation date in
-            // descending manner
-            if (itemActions.getFirst().actionId != existingAction.actionId) {
+            if (itemActions.getLast().actionId != existingAction.actionId) {
                 throw new ConflictResponse();
             }
 
@@ -76,7 +74,7 @@ public class ActionController {
             }
 
             List<Action> itemActions = actionDao.getActionsForItem(existingAction.lotId);
-            if (itemActions.getFirst().actionId != existingAction.actionId) {
+            if (itemActions.getLast().actionId != existingAction.actionId) {
                 throw new ConflictResponse();
             }
             actionDao.deleteActionById(id);
@@ -104,7 +102,7 @@ public class ActionController {
             // for item with lotId = action.lotId
             List<Action> prevActions = actionDao.getActionsForItem(action.lotId);
             if (!prevActions.isEmpty()) {
-                Action lastAction = prevActions.getFirst();
+                Action lastAction = prevActions.getLast();
 
                 // NOTE:
                 // Obviously there are many combinations

@@ -90,6 +90,7 @@ public interface ActionDao {
                 :employeeId,
                 :price,
                 cast(:currencyCode as diamonds_are_forever.code)
+            )
             """)
     @GetGeneratedKeys
     Action createAction(@BindFields Action action);
