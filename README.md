@@ -49,7 +49,7 @@ git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 6. Pull the image with application
 
 ```bash
-docker compose pull
+docker compose -f api/docker-compose.yaml pull
 ```
 
 7. Start reverse proxy
@@ -69,6 +69,19 @@ docker compose -f api/docker-compose.yaml up -d
 ````bash
 docker compose -f api/docker-compose.yaml down
 docker compose -f traefik/docker-compose.yaml down
+````
+
+10. (optional) Check the logs
+
+````bash
+docker compose -f api/docker-compose.yaml logs postgresql
+````
+
+11. (optional) Remove volume created by posgresql to enfore re-populating DB
+
+````bash
+docker volume ls
+docker volume rm api_db-data
 ````
 
 ---
