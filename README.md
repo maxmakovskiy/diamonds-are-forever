@@ -10,6 +10,8 @@
 
 ### Setup guide
 
+#### On local dev machine
+
 1. Clone repo
 
 ````bash
@@ -22,34 +24,50 @@ git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 ./mvnw dependency:go-offline clean compile package
 ````
 
-3. Run compose
+3. Build the Docker image
+
+```bash
+docker build -t diamonds_are_forever .
+```
+
+4. Push to the `ghcr.io` registry
+
+```bash
+docker login ghcr.io -u <username>
+docker tag diamonds_are_forever ghcr.io/<username>/diamonds_are_forever:latest
+```
+
+#### On remote prod machine
+
+5. Clone repo
 
 ````bash
-docker compose up -d
+git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 ````
 
-4. Verify that everything is running
+6. Pull the image with application
+
+```bash
+docker compose pull
+```
+
+7. Start reverse proxy
 
 ````bash
-docker compose ps
+docker compose -f traefik/docker-compose.yaml up -d
 ````
 
-5. Run `curl` to test API point `/`
+8. Start application with database
 
 ````bash
-curl localhost:8080
+docker compose -f api/docker-compose.yaml up -d
 ````
 
-Output should be:
+9. To stop running containers run
 
 ````bash
-Hello world
-````
-
-6. To stop running containers run
-
-````bash
-docker compose down
+docker compose -f api/docker-compose.yaml down
+docker compose -f traefik/docker-compose.yaml down
 ````
 
 ---
