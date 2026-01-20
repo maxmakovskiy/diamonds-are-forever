@@ -15,7 +15,7 @@ services:
       - diamonds-network
     expose:
       - 8080
-    label:
+    labels:
       - traefik.enable=true
       - traefik.http.routers.diamonds.entrypoints=https
       - traefik.http.routers.diamonds.rule=Host(`${DIAMONDS_FULLY_QUALIFIED_DOMAIN_NAME}`)
