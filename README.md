@@ -35,6 +35,7 @@ docker build -t diamonds_are_forever .
 ```bash
 docker login ghcr.io -u <username>
 docker tag diamonds_are_forever ghcr.io/<username>/diamonds_are_forever:latest
+docker push ghcr.io/<username>/diamonds_are_forever:latest
 ```
 
 #### On remote prod machine

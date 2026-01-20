@@ -1,0 +1,55 @@
+networks:
+  diamonds-network:
+    name: diamonds-network
+
+services:
+  traefik:
+    image: traefik:${TRAEFIK_IMAGE_VERSION}
+    command:
+      - --api.dashboard=${TRAEFIK_ENABLE_DASHBOARD}
+      ## Docker
+      # Use Docker as a provider
+      - --providers.docker=true
+      # Do not expose containers by default
+      - --providers.docker.exposedbydefault=false
+      # Help Traefik to find the right network
+      - --providers.docker.network=diamonds-network
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      # We redirect all HTTP traffic to HTTPS
+      - --entrypoints.http.http.redirections.entrypoint.to=https
+      - --entrypoints.http.http.redirections.entrypoint.scheme=https
+      - --entrypoints.http.http.redirections.entrypoint.permanent=true
+      # We enable TLS for all HTTPS traffic
+      - --entrypoints.https.http.tls=true
+      - --entrypoints.https.http.tls.certresolver=letsencrypt
+      ## Certificates
+      # We add Let's Encrypt as a default certificate resolver
+      - --certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+    restart: unless-stopped
+    networks:
+      - diamonds-network
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # This is needed for Traefik to be able to listen to the Docker events
+      # It allows Traefik to react when containers are started or stopped
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # This is needed for Traefik to be able to store the Let's Encrypt certificates
+      - ./letsencrypt:/letsencrypt
+    # Labels can be attached to containers for various customizations
+    # In this case, the labels are to configure Traefik
+    labels:
+      # Enable Traefik for this container
+      - traefik.enable=true
+      ## Routers
+      # The entrypoint of this container is HTTPS
+      - traefik.http.routers.traefik.entrypoints=https
+      # This container is accessible with the fully qualified domain name
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_FULLY_QUALIFIED_DOMAIN_NAME}`)
+      # This is needed to access the Traefik dashboard
+      - traefik.http.routers.traefik.service=api@internal
+
