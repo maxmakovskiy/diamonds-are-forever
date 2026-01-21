@@ -60,7 +60,7 @@ public class Main {
         app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
         app.get("/profile", authController::getProfile, Role.AUTHENTICATED);
 
-        ItemController itemController = new ItemController(itemsCache);
+        ItemController itemController = new ItemController(itemsCache, lifecyclesCache);
         app.get("/items", itemController::getAllItems, Role.ANYONE);
         app.delete("/items/{id}", itemController::deleteItem, Role.AUTHENTICATED);
 
