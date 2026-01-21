@@ -61,6 +61,16 @@ backgroundColor: #fff
 | `GET /colored-diamonds/{id}` | Get colored diamond details | `200`, `404` |
 | `GET /colored-gemstones/{id}` | Get colored gemstone details | `200`, `404` |
 ---
+
+## GET with query parameter
+
+| Parameter | Type | Example | Description                                                                  |
+|---|---|---|------------------------------------------------------------------------------|
+| `isAvailable` | boolean | `?isAvailable=True` | available ?                                                                  |
+| `type` | string | `?type=white%20diamond` | Filters by item type|
+
+
+---
 ## POST Endpoints
 | Endpoint | Description | Status codes |
 |---|---|---|
