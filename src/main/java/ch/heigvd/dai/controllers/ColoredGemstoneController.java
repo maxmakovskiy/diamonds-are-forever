@@ -7,11 +7,28 @@ import ch.heigvd.dai.models.ColoredGemstone;
 import ch.heigvd.dai.models.Item;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.http.NotModifiedResponse;
+import io.javalin.http.PreconditionFailedResponse;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ColoredGemstoneController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public ColoredGemstoneController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
+            throw new NotModifiedResponse();
+        }
 
         ColoredGemstoneDao dao = Database.getInstance().jdbi.onDemand(ColoredGemstoneDao.class);
         ColoredGemstone cgs = dao.findByLotId(id);
@@ -19,6 +36,15 @@ public class ColoredGemstoneController {
         if (cgs == null) {
             throw new NotFoundResponse();
         }
+
+        LocalDateTime now;
+        if (itemsCache.containsKey(cgs.lotId)) {
+            now = itemsCache.get(cgs.lotId);
+        } else {
+            now = LocalDateTime.now();
+            itemsCache.put(cgs.lotId, now);
+        }
+        ctx.header("Last-Modified", String.valueOf(now));
 
         ctx.json(cgs);
         ctx.status(200);
@@ -52,6 +78,12 @@ public class ColoredGemstoneController {
             cgsd.insertColoredGemstone(cgs);
 
             ColoredGemstone created = cgsd.findByLotId(lotId);
+
+            LocalDateTime now = LocalDateTime.now();
+            itemsCache.put(created.lotId, now);
+            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+            ctx.header("Last-Modified", String.valueOf(now));
+
             ctx.json(created);
             ctx.status(201);
         }
@@ -59,6 +91,13 @@ public class ColoredGemstoneController {
 
     public void update(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
+            throw new PreconditionFailedResponse();
+        }
 
         ColoredGemstone cgs =
                 ctx.bodyValidator(ColoredGemstone.class)
@@ -107,6 +146,12 @@ public class ColoredGemstoneController {
                     cgs.treatment);
 
             ColoredGemstone updated = cgsd.findByLotId(id);
+
+            LocalDateTime now = LocalDateTime.now();
+            itemsCache.put(updated.lotId, now);
+            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+            ctx.header("Last-Modified", String.valueOf(now));
+
             ctx.json(updated);
             ctx.status(200);
         }
