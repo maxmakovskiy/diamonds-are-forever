@@ -138,8 +138,8 @@ CREATE TABLE white_diamond
    whiteScale white_scale NOT NULL,
    clarity    clarity     NOT NULL,
    FOREIGN KEY (lotId) REFERENCES item (lotId)
-      ON DELETE RESTRICT ON UPDATE CASCADE,
-       CONSTRAINT positive_weight CHECK (weightCt > 0),
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT positive_weight CHECK (weightCt > 0),
    CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 

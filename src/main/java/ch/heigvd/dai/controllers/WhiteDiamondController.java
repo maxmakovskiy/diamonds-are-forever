@@ -7,11 +7,28 @@ import ch.heigvd.dai.models.Item;
 import ch.heigvd.dai.models.WhiteDiamond;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.http.NotModifiedResponse;
+import io.javalin.http.PreconditionFailedResponse;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class WhiteDiamondController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public WhiteDiamondController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
+            throw new NotModifiedResponse();
+        }
 
         WhiteDiamondDao dao = Database.getInstance().jdbi.onDemand(WhiteDiamondDao.class);
         WhiteDiamond wd = dao.findByLotId(id);
@@ -19,6 +36,15 @@ public class WhiteDiamondController {
         if (wd == null) {
             throw new NotFoundResponse();
         }
+
+        LocalDateTime now;
+        if (itemsCache.containsKey(wd.lotId)) {
+            now = itemsCache.get(wd.lotId);
+        } else {
+            now = LocalDateTime.now();
+            itemsCache.put(wd.lotId, now);
+        }
+        ctx.header("Last-Modified", String.valueOf(now));
 
         ctx.json(wd);
         ctx.status(200);
@@ -51,6 +77,12 @@ public class WhiteDiamondController {
             wdDao.insertWhiteDiamond(wd);
 
             WhiteDiamond created = wdDao.findByLotId(wd.lotId);
+
+            LocalDateTime now = LocalDateTime.now();
+            itemsCache.put(created.lotId, now);
+            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+            ctx.header("Last-Modified", String.valueOf(now));
+
             ctx.json(created);
             ctx.status(201);
         }
@@ -58,6 +90,13 @@ public class WhiteDiamondController {
 
     public void update(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
+            throw new PreconditionFailedResponse();
+        }
 
         WhiteDiamond wd =
                 ctx.bodyValidator(WhiteDiamond.class)
@@ -75,12 +114,11 @@ public class WhiteDiamondController {
         try (Handle handle = Database.getInstance().jdbi.open()) {
             WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
+
             Item item = itemDao.getItemByLotId(id);
             if (item == null) {
                 throw new NotFoundResponse();
             }
-            // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
-
 
             Item updatedItem = new Item();
             updatedItem.lotId = id;
@@ -89,7 +127,6 @@ public class WhiteDiamondController {
                     wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
             updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
             itemDao.updateItem(updatedItem);
-
 
             wdDao.updateWhiteDiamond(
                     id,
@@ -101,11 +138,14 @@ public class WhiteDiamondController {
                     wd.whiteScale,
                     wd.clarity);
 
-            // TODO:
-            // Return updated WhiteDiamond
-            // example ActionController::update
-            WhiteDiamond created = wdDao.findByLotId(id);
-            ctx.json(created);
+            WhiteDiamond updated = wdDao.findByLotId(id);
+
+            LocalDateTime now = LocalDateTime.now();
+            itemsCache.put(updated.lotId, now);
+            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+            ctx.header("Last-Modified", String.valueOf(now));
+
+            ctx.json(updated);
             ctx.status(200);
         }
     }
