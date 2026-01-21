@@ -50,6 +50,7 @@ public class Main {
         AuthController authController = new AuthController();
         app.post("/sign-in", authController::login, Role.ANYONE);
         app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
+        app.get("/profile", authController::getProfile, Role.AUTHENTICATED);
 
         ItemController itemController = new ItemController();
         app.get("/items", itemController::getAllItems, Role.ANYONE);

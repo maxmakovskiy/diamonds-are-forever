@@ -17,7 +17,8 @@ public class Database {
     // Add secrets management
     private Database() {
         jdbi =
-                Jdbi.create("jdbc:postgresql://postgresql:5432/diamonds", "diamonds", "diamonds")
+                 Jdbi.create("jdbc:postgresql://postgresql:5432/diamonds", "diamonds", "diamonds")
+                //Jdbi.create("jdbc:localhost://postgresql:5432/diamonds", "diamonds", "diamonds")
                         .installPlugin(new PostgresPlugin())
                         .installPlugin(new SqlObjectPlugin());
     }
