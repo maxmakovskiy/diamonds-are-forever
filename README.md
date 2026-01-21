@@ -1528,11 +1528,25 @@ Content-Length: 0
 
 ### Use cases
 
+- Inventory viewing: 
+    
+    Visitors can browse the inventory and inspect item details and lifecycle history.
+
+- Inventory management: 
+
+    Authorized employees can create, update, and delete diamonds and gemstones.
+
+- Inventory Lifecycle tracebility:
+
+    Record and review item movements such as purchases, transfers, and sales.
+
 
 ---
 
 ### Further improvements
 
+- Validation + business rules hardening: 
+    Enforce stricter input validation (enum values, numeric ranges, date formats) and clearer conflict responses for invalid lifecycle transitions.
 
 ---
 
