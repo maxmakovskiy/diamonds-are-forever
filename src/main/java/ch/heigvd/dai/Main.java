@@ -11,7 +11,7 @@ import io.javalin.http.UnauthorizedResponse;
 import io.javalin.json.JavalinJackson;
 
 public class Main {
-    private static final int PORT = 8080;
+    private static final int PORT = Integer.parseInt(System.getenv("DIAMONDS_APP_PORT"));
 
     public static void main(String[] args) {
         Javalin app =
