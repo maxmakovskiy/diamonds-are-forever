@@ -51,4 +51,18 @@ public interface ItemDao {
 
     @SqlUpdate("DELETE FROM diamonds_are_forever.item WHERE lotId = :lotId")
     void deleteItem(@Bind("lotId") int lotId);
+
+    @SqlQuery(
+            """
+            SELECT DISTINCT i.*
+            FROM diamonds_are_forever.item i
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM diamonds_are_forever.action a
+                WHERE a.lotId = i.lotId
+                AND a.category = 'sale'
+            )
+            ORDER BY i.purchaseDate
+            """)
+    List<Item> getAvailableItems();
 }

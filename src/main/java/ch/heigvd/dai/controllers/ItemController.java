@@ -11,6 +11,9 @@ import org.jdbi.v3.core.Handle;
 
 public class ItemController {
     public void getAllItems(Context ctx) {
+        String isAvailable = ctx.queryParam("isAvailable");
+        boolean filterAvailable = "true".equalsIgnoreCase(isAvailable);
+
         ItemDao dao = Database.getInstance().jdbi.onDemand(ItemDao.class);
         List<Item> items = dao.getAllItems();
         ctx.json(items);
