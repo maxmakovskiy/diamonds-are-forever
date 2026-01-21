@@ -14,8 +14,19 @@ public class ItemController {
         String isAvailable = ctx.queryParam("isAvailable");
         boolean filterAvailable = "true".equalsIgnoreCase(isAvailable);
 
+        String type = ctx.queryParam("type");
+
         ItemDao dao = Database.getInstance().jdbi.onDemand(ItemDao.class);
-        List<Item> items = dao.getAllItems();
+
+        List<Item> items;
+        if (type != null) {
+            items = dao.getItemsByType(type);
+        } else if (filterAvailable) {
+            items = dao.getAvailableItems();
+        } else {
+            items = dao.getAllItems();
+        }
+
         ctx.json(items);
         ctx.status(200);
     }

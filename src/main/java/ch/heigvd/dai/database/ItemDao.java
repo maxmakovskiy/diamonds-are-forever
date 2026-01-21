@@ -65,4 +65,12 @@ public interface ItemDao {
             ORDER BY i.purchaseDate
             """)
     List<Item> getAvailableItems();
+
+    @SqlQuery(
+            """
+            SELECT * FROM diamonds_are_forever.item
+            WHERE type = cast(:type as diamonds_are_forever.item_category)
+            ORDER BY purchaseDate
+            """)
+    List<Item> getItemsByType(@Bind("type") String type);
 }
