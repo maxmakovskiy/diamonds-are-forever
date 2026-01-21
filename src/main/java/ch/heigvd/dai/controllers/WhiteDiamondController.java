@@ -25,15 +25,33 @@ public class WhiteDiamondController {
     }
 
     public void create(Context ctx) {
+        WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class)
+                .check(obj -> obj.stockName != null, "Missing stock name")
+                .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+                .check(obj -> obj.origin != null, "Missing origin")
+                .check(obj -> obj.weightCt > 0, "Weight must be positive")
+                .check(obj -> obj.shape != null, "Missing shape")
+                .check(obj -> obj.length > 0, "Length must be positive")
+                .check(obj -> obj.width > 0, "Width must be positive")
+                .check(obj -> obj.depth > 0, "Depth must be positive")
+                .check(obj -> obj.gemType != null, "Missing gem type")
+                .check(obj -> obj.whiteScale != null, "Missing white Scale")
+                .check(obj -> obj.clarity != null, "Missing clarity")
+                .get();
+
         try (Handle handle = Database.getInstance().jdbi.open()) {
             WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
 
-            WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
-            item.lotId =
-                    itemDao.insertItem(item.stockName, item.purchaseDate, item.origin, item.type);
-            wdDao.insertWhiteDiamond(item);
+            //WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
+            int lotId =
+                    itemDao.insertItem(wd.stockName, wd.purchaseDate, wd.origin, wd.type);
+            wd.lotId = lotId;
 
+            wdDao.insertWhiteDiamond(wd);
+
+            WhiteDiamond created = wdDao.findByLotId(wd.lotId);
+            ctx.json(created);
             ctx.status(201);
         }
     }
@@ -41,24 +59,37 @@ public class WhiteDiamondController {
     public void update(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
 
+        WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class)
+                .check(obj -> obj.stockName != null, "Missing stock name")
+                .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+                .check(obj -> obj.origin != null, "Missing origin")
+                .check(obj -> obj.weightCt > 0, "Weight must be positive")
+                .check(obj -> obj.shape != null, "Missing shape")
+                .check(obj -> obj.length > 0, "Length must be positive")
+                .check(obj -> obj.width > 0, "Width must be positive")
+                .check(obj -> obj.depth > 0, "Depth must be positive")
+                .check(obj -> obj.gemType != null, "Missing gem type")
+                .check(obj -> obj.whiteScale != null, "Missing white Scale")
+                .check(obj -> obj.clarity != null, "Missing clarity")
+                .get();
+
         try (Handle handle = Database.getInstance().jdbi.open()) {
             WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
+            Item item = itemDao.getItemByLotId(id);
+            if (item == null) {throw new NotFoundResponse();}
+            //WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
-            if (wdDao.findByLotId(id) == null) {
-                throw new NotFoundResponse();
+            if (wd.stockName != null || wd.purchaseDate != null || wd.origin != null) {
+                Item updatedItem = new Item();
+                updatedItem.lotId = id;
+                updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
+                updatedItem.purchaseDate =
+                        wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
+                updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
+                itemDao.updateItem(updatedItem);
             }
 
-            WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
-            itemDao.updateItem(
-                    new Item(
-                            id,
-                            wd.stockName,
-                            wd.purchaseDate,
-                            wd.origin,
-                            wd.type,
-                            wd.createdAt,
-                            wd.updatedAt));
             wdDao.updateWhiteDiamond(
                     id,
                     wd.weightCt,
@@ -72,6 +103,8 @@ public class WhiteDiamondController {
             // TODO:
             // Return updated WhiteDiamond
             // example ActionController::update
+            WhiteDiamond created = wdDao.findByLotId(wd.lotId);
+            ctx.json(created);
             ctx.status(200);
         }
     }
