@@ -1548,6 +1548,15 @@ Content-Length: 0
 - Validation + business rules hardening: 
     Enforce stricter input validation (enum values, numeric ranges, date formats) and clearer conflict responses for invalid lifecycle transitions.
 
+
+- Avilable for 
+  - user's password
+  - tracking multiple certificates 
+  - tracking status before and after recut
+  - multiple type of actions (memo out/return memo out, purchase, sold, memo in/return memo in, etc..)
+
+
+- Put basic auth for traefik dashboard
 ---
 
 ### Repository structure
@@ -1565,7 +1574,9 @@ Content-Length: 0
 ---
 
 ### Authors
-
+- [FeliciaCoding](https://github.com/FeliciaCoding)
+- [maxmakovskiy](https://github.com/maxmakovskiy)
+- [AlterSpectre](https://github.com/AlterSpectre)
 
 ---
 
