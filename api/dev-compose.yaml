@@ -1,0 +1,40 @@
+networks:
+  diamonds-network-dev:
+
+volumes:
+  db-data-dev:
+
+services:
+  diamonds:
+    build:
+      context: ./../
+      dockerfile: Dockerfile
+    image: diamonds_are_forever_local
+    container_name: diamonds_are_forever_local
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    networks:
+      - diamonds-network-dev
+    ports:
+      - 8080:8080
+
+  postgresql:
+    image: 'postgres:${POSTGRES_VERSION}'
+    networks:
+      - diamonds-network-dev
+    # TODO: add secrets management?
+    # https://docs.docker.com/compose/how-tos/use-secrets/
+    environment:
+      - POSTGRES_USER=diamonds
+      - POSTGRES_PASSWORD=diamonds
+      - POSTGRES_DB=diamonds
+    volumes:
+      - ./../sql/:/docker-entrypoint-initdb.d:ro
+      - db-data-dev:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U diamonds"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
