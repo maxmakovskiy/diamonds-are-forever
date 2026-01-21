@@ -81,7 +81,6 @@ public class WhiteDiamondController {
             }
             // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
-
             Item updatedItem = new Item();
             updatedItem.lotId = id;
             updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
@@ -89,7 +88,6 @@ public class WhiteDiamondController {
                     wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
             updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
             itemDao.updateItem(updatedItem);
-
 
             wdDao.updateWhiteDiamond(
                     id,

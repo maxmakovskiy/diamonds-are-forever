@@ -100,7 +100,6 @@ public class ColoredDiamondController {
             updatedItem.origin = cd.origin != null ? cd.origin : item.origin;
             itemDao.updateItem(updatedItem);
 
-
             cdd.updateColoredDiamond(
                     id,
                     cd.weightCt,

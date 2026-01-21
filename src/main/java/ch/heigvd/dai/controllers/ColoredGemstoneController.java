@@ -95,7 +95,6 @@ public class ColoredGemstoneController {
             updatedItem.origin = cgs.origin != null ? cgs.origin : item.origin;
             itemDao.updateItem(updatedItem);
 
-
             cgsd.updateColoredGemstone(
                     id,
                     cgs.weightCt,
