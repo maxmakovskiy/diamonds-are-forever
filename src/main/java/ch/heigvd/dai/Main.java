@@ -58,7 +58,7 @@ public class Main {
 
         WhiteDiamondController whiteDiamondController = new WhiteDiamondController();
         app.get("/white-diamonds/{id}", whiteDiamondController::getOne, Role.ANYONE);
-        app.put("/white-diamonds/{id}", whiteDiamondController::update, Role.ANYONE);
+        app.put("/white-diamonds/{id}", whiteDiamondController::update, Role.AUTHENTICATED);
         app.post("/white-diamonds", whiteDiamondController::create, Role.AUTHENTICATED);
 
         ColoredDiamondController coloredDiamondController = new ColoredDiamondController();
