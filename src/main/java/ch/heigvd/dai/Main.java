@@ -63,9 +63,13 @@ public class Main {
 
         ColoredDiamondController coloredDiamondController = new ColoredDiamondController();
         app.get("/colored-diamonds/{id}", coloredDiamondController::getOne, Role.ANYONE);
+        app.put("/colored-diamonds/{id}", coloredDiamondController::update, Role.AUTHENTICATED);
+        app.post("/colored-diamonds", coloredDiamondController::create, Role.AUTHENTICATED);
 
         ColoredGemstoneController coloredGemstoneController = new ColoredGemstoneController();
         app.get("/colored-gemstones/{id}", coloredGemstoneController::getOne, Role.ANYONE);
+        app.put("/colored-gemstones/{id}", coloredGemstoneController::update, Role.AUTHENTICATED);
+        app.post("/colored-gemstones", coloredGemstoneController::create, Role.AUTHENTICATED);
 
         ActionController actionController = new ActionController();
         app.get("/items/lifecycle/{id}", actionController::getAllForItem, Role.ANYONE);

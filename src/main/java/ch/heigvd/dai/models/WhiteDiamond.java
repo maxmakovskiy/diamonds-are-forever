@@ -15,6 +15,7 @@ public class WhiteDiamond {
     public double length;
     public double width;
     public double depth;
+    public String gemType;
     public String whiteScale;
     public String clarity;
 
