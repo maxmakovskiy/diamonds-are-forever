@@ -902,7 +902,7 @@ curl -i \
   -H "Content-Type: application/json" \
   -c cookie.txt
   -d '{"email":"john.smith@example.com"}' \
-  http://localhost:8080/sign-in
+  https://diamonds.ddnsfree.com/sign-in
 ```
 
 #### Input example
@@ -913,7 +913,7 @@ curl -i -X POST \
   -d '{
     "email": "john.smith@example.com"
   }' \
-  http://localhost:8080/sign-in
+  https://diamonds.ddnsfree.com/sign-in
 ```
 
 #### Output example
@@ -930,14 +930,14 @@ Set-Cookie: JSESSIONID=node09s6bo6ppxq7b1vqge50l367fn0.node0; Path=/; HttpOnly
 curl -i \
   -X POST \
   --cookie '[put you cookie here]' \
-  http://localhost:8080/sign-out
+  https://diamonds.ddnsfree.com/sign-out
 ```
 
 #### Input example
 ```bash
 curl -i -X POST \
   -b cookies.txt \
-  http://localhost:8080/sign-out
+  hhttps://diamonds.ddnsfree.com/sign-out
 ```
 
 #### Output example
@@ -956,7 +956,7 @@ Content-Type: text/plain
 ```bash
 curl -i -X GET \
   -b cookies.txt \
-  http://localhost:8080/profile
+  https://diamonds.ddnsfree.com/profile
 ```
 
 #### Output example
@@ -978,7 +978,7 @@ Content-Length: 136
 ```bash
 curl -i \
   -X GET \
-  http://localhost:8080/items
+  https://diamonds.ddnsfree.com/items
 ```
 
 #### Output example
@@ -999,7 +999,7 @@ Content-Length: 4117
 ```bash
 curl -i \
   -X GET \
-  http://localhost:8080/items/lifecycle/{id}
+  https://diamonds.ddnsfree.com/items/lifecycle/{id}
 ```
 
 #### Output example
@@ -1021,13 +1021,13 @@ Content-Length: 306
 ```bash
 curl -i \
   -X GET \
-  http://localhost:8080/white-diamonds/{id}
+  https://diamonds.ddnsfree.com/white-diamonds/{id}
 ```
 
 #### Input example
 ```bash
 curl -i -X GET \
-  http://localhost:8080/white-diamonds/1
+  https://diamonds.ddnsfree.com/white-diamonds/1
 ```
 
 #### Output example
@@ -1060,7 +1060,7 @@ curl -i -X PUT \
     "whiteScale":{whiteScale},
     "clarity":{clarity}
   }' \
-  http://localhost:8080/white-diamonds/{id}
+  https://diamonds.ddnsfree.com/white-diamonds/{id}
 
 ```
 
@@ -1081,7 +1081,7 @@ curl -i -X PUT \
     "whiteScale":"E",
     "clarity":"VVS2"
   }' \
-  http://localhost:8080/white-diamonds/1
+  https://diamonds.ddnsfree.com/white-diamonds/1
 
 ```
 
@@ -1114,7 +1114,7 @@ curl -i -X POST \
     "whiteScale": "{whiteScale}",
     "clarity": "{clarity}"
   }' \
-  http://localhost:8080/white-diamonds
+  https://diamonds.ddnsfree.com/white-diamonds
 
 ```
 
@@ -1135,7 +1135,7 @@ curl -i -X POST \
     "whiteScale":"E",
     "clarity":"VVS1"
   }' \
-  http://localhost:8080/white-diamonds
+  https://diamonds.ddnsfree.com/white-diamonds
 
 
 ```
@@ -1157,13 +1157,13 @@ Content-Length: 322
 #### CURL template
 ```bash
 curl -i -X GET \
-  http://localhost:8080/colored-diamonds/{id}
+  https://diamonds.ddnsfree.com/colored-diamonds/{id}
 ```
 
 #### input example
 ```bash
 curl -i -X GET \
-  http://localhost:8080/colored-diamonds/6
+  https://diamonds.ddnsfree.com/colored-diamonds/6
 
 ```
 
@@ -1202,7 +1202,7 @@ curl -i -X PUT \
     "fancyColor": "{fancyColor}",
     "clarity": "{clarity}"
   }' \
-  http://localhost:8080/colored-diamonds/{id}
+  https://diamonds.ddnsfree.com/colored-diamonds/{id}
 
 ```
 
@@ -1226,7 +1226,7 @@ curl -i -X PUT \
     "fancyColor":"Yellow",
     "clarity":"VS2"
   }' \
-  http://localhost:8080/colored-diamonds/6
+  https://diamonds.ddnsfree.com/colored-diamonds/6
 
 ```
 
@@ -1247,7 +1247,7 @@ curl -i -X PUT \
     "whiteScale":"E",
     "clarity":"VVS2"
   }' \
-  http://localhost:8080/white-diamonds/1
+  https://diamonds.ddnsfree.com/white-diamonds/1
 HTTP/1.1 200 OK
 Date: Wed, 21 Jan 2026 21:10:46 GMT
 Content-Type: application/json
@@ -1282,7 +1282,7 @@ curl -i -X POST \
     "fancyColor": "{fancyColor}",
     "clarity": "{clarity}"
   }' \
-  http://localhost:8080/colored-diamonds
+  https://diamonds.ddnsfree.com/colored-diamonds
 
 ```
 
@@ -1307,7 +1307,7 @@ curl -i -X POST \
     "fancyColor":"Yellow",
     "clarity":"VS1"
   }' \
-  http://localhost:8080/colored-diamonds
+ https://diamonds.ddnsfree.com/colored-diamonds
 
 
 
@@ -1332,14 +1332,14 @@ Content-Length: 399
 #### CURL template
 ```bash
 curl -i -X GET \
-  http://localhost:8080/colored-gemstones/{id}
+  https://diamonds.ddnsfree.com/colored-gemstones/{id}
 
 ```
 
 #### input example
 ```bash
 curl -i -X GET \
-  http://localhost:8080/colored-gemstones/11
+  https://diamonds.ddnsfree.com/colored-gemstones/11
   
 ```
 
@@ -1376,7 +1376,7 @@ curl -i -X PUT \
     "gemColor": "{gemColor}",
     "treatment": "{treatment}"
   }' \
-  http://localhost:8080/colored-gemstones/{id}
+  https://diamonds.ddnsfree.com/colored-gemstones/{id}
 
 ```
 
@@ -1398,7 +1398,7 @@ curl -i -X PUT \
     "gemColor":"Blue",
     "treatment":"No heat"
   }' \
-  http://localhost:8080/colored-gemstones/14
+  https://diamonds.ddnsfree.com/colored-gemstones/14
 
 
 ```
@@ -1435,7 +1435,7 @@ curl -i -X POST \
     "gemColor": "{gemColor}",
     "treatment": "{treatment}"
   }' \
-  http://localhost:8080/colored-gemstones
+  https://diamonds.ddnsfree.com/colored-gemstones
 
 
 ```
@@ -1458,7 +1458,7 @@ curl -i -X POST \
     "gemColor":"Blue",
     "treatment":"No heat"
   }' \
-  http://localhost:8080/colored-gemstones
+  https://diamonds.ddnsfree.com/colored-gemstones
 
 
 ```
@@ -1494,7 +1494,7 @@ curl -i -X POST \
     "price": {price},
     "currencyCode": "{currencyCode}"
   }' \
-  http://localhost:8080/actions
+  https://diamonds.ddnsfree.com/actions
 
 
 ```
@@ -1516,7 +1516,7 @@ curl -i -X POST \
     "price": 15000.00,
     "currencyCode": "USD"
   }' \
-  http://localhost:8080/actions
+  https://diamonds.ddnsfree.com/actions
 
 
 ```
@@ -1539,14 +1539,14 @@ Content-Length: 327
 ```bash
 curl -i -X DELETE \
   -b cookies.txt \
-  http://localhost:8080/actions/{id}
+  https://diamonds.ddnsfree.com/actions/{id}
 ```
 
 #### Input example
 ```bash
 curl -i -X DELETE \
   -b cookies.txt \
-  http://localhost:8080/actions/21
+  https://diamonds.ddnsfree.com/actions/21
 
 ```
 
@@ -1554,7 +1554,7 @@ curl -i -X DELETE \
 ```bash 
  curl -i -X DELETE \
   -b cookies.txt \
-  http://localhost:8080/actions/21
+  https://diamonds.ddnsfree.com/actions/21
 HTTP/1.1 200 OK
 Date: Wed, 21 Jan 2026 21:19:42 GMT
 Content-Type: text/plain
