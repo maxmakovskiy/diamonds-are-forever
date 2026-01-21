@@ -41,6 +41,15 @@ backgroundColor: #fff
 
 ---
 
+## Deployment
+
+- Dockerized application
+- Hosted on a cloud virtual machine
+- Domain + DNS configuration
+- HTTPS via reverse proxy
+
+---
+
 ## API Design
 
 - RESTful endpoints
@@ -100,15 +109,6 @@ backgroundColor: #fff
 | `DELETE /actions/{id}` | Delete most recent action of an item | `200`, `401`, `404`, `409` |
 
 
----
-
-
-## Deployment
-
-- Dockerized application
-- Hosted on a cloud virtual machine
-- Domain + DNS configuration
-- HTTPS via reverse proxy
 
 --- 
 ## Cache strategy 
