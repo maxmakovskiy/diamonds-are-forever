@@ -1506,13 +1506,41 @@ Content-Type: text/plain
 Content-Length: 0
 ```
 
-
-
-
 ---
 
 ### Caching strategy
 
+The application makes use of two caches: one for items and another one for actions.
+
+#### Actions cache
+
+The idea of actions cache is very simple: <br>
+when user requests GET on `/items/lifecycle/{id}` we return him
+lifecycle (set of actions) of some item. <br>
+When action is created for certain item or deleted,
+the entry in hash map for this item becomes invalidated therefore 
+needs to be re-fetched. <br>
+Also an entry in actions cache becomes invalidated if corresponding
+item gets deleted.
+
+#### Items cache
+
+Idea: items cache becomes invalidated in 3 cases:
+- when we update item
+- when we create item
+- when we delete item
+
+The rest of the time it is considered valid.
+
+Also since on database level all the stones are descendants of item,
+we can use this fact to synchronize cache across this 3 domains.
+
+Example: <br>
+User1 gets all the items from `/items` point. <br>
+In meanwhile user2 has updated white diamond, since white diamond is
+essentially an item whole hashmap with items becomes invalidated. <br>
+Now when user1 needs all the items again, they will be re-fetched from
+the database for him.
 
 ---
 
@@ -1530,27 +1558,59 @@ Content-Length: 0
 
     Record and review item movements such as purchases, transfers, and sales.
 
-
 ---
 
 ### Further improvements
 
-- Validation + business rules hardening: 
-    Enforce stricter input validation (enum values, numeric ranges, date formats) and clearer conflict responses for invalid lifecycle transitions.
+1. Validation and business rules hardening: 
+- enforce stricter input validation (enum values, numeric ranges, date formats) 
+- provide conflict responses for invalid lifecycle transitions
 
+2. Provide actual security guarantee with by introducing user's password.
+ 
+3. Improving business logic:
+- tracking multiple certificates 
+- tracking status before and after recut
+- multiple type of actions (memo out/return memo out, purchase, sold, memo in/return memo in, etc.)
 
-- Avilable for 
-  - user's password
-  - tracking multiple certificates 
-  - tracking status before and after recut
-  - multiple type of actions (memo out/return memo out, purchase, sold, memo in/return memo in, etc..)
+4. Improving deployment with basic auth for Traefik dashboard.
 
+5. Migrate to actual database stored session intead of stroing them
+in file.
 
-- Put basic auth for traefik dashboard
 ---
 
 ### Repository structure
 
+````
+main/
+│   ├──java/
+│   │   ├── ch.heigvd.dai/
+│   │   │   ├── controllers/                      // controllers for every API point
+│   │   │   │   ├── ActionController.java            
+│   │   │   │   ├── AuthController.java            
+│   │   │   │   ├── ColoredDiamondController.java            
+│   │   │   │   ├── ColoredGemstoneController.java            
+│   │   │   │   ├── ItemController.java            
+│   │   │   │   ├── Role.java            
+│   │   │   │   ├── WhiteDiamondController.java            
+│   │   │   ├── database/                         // jdbi mappings between java classes and database 
+│   │   │   │   ├── ActionDao.java
+│   │   │   │   ├── ColoredDiamondDao.java
+│   │   │   │   ├── ColoredGemstoneDao.java
+│   │   │   │   ├── Database.java
+│   │   │   │   ├── EmployeeDao.java
+│   │   │   │   ├── ItemDao.java
+│   │   │   │   ├── WhiteDiamondDao.java
+│   │   │   ├── models/                           // data classes 
+│   │   │   │   ├── Action.java
+│   │   │   │   ├── ColoredDiamond.java
+│   │   │   │   ├── Employee.java
+│   │   │   │   ├── Item.java
+│   │   │   │   ├── WhiteDiamond.java
+│   │   │   ├── Main.java                         // entry point
+│   │   │   ├── Session.java                      // session handling 
+````
 
 ---
 
