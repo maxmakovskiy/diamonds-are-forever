@@ -54,6 +54,7 @@ public class Main {
 
         ItemController itemController = new ItemController();
         app.get("/items", itemController::getAllItems, Role.ANYONE);
+        app.delete("/items/{id}", itemController::deleteItem, Role.AUTHENTICATED);
 
         WhiteDiamondController whiteDiamondController = new WhiteDiamondController();
         app.get("/white-diamonds/{id}", whiteDiamondController::getOne, Role.ANYONE);

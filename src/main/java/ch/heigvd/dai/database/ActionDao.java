@@ -94,4 +94,7 @@ public interface ActionDao {
             """)
     @GetGeneratedKeys
     Action createAction(@BindFields Action action);
+
+    @SqlUpdate("DELETE FROM diamonds_are_forever.action WHERE lotId = :lotId")
+    void deleteActionsForItem(@Bind("lotId") int lotId);
 }

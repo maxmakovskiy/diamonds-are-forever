@@ -48,4 +48,7 @@ public interface ItemDao {
 
     @SqlQuery("SELECT * FROM diamonds_are_forever.item WHERE lotId = :lotId")
     Item getItemByLotId(@Bind("lotId") int lotId);
+
+    @SqlUpdate("DELETE FROM diamonds_are_forever.item WHERE lotId = :lotId")
+    void deleteItem(@Bind("lotId") int lotId);
 }
