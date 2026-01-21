@@ -7,11 +7,28 @@ import ch.heigvd.dai.models.ColoredDiamond;
 import ch.heigvd.dai.models.Item;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.http.NotModifiedResponse;
+import io.javalin.http.PreconditionFailedResponse;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ColoredDiamondController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public ColoredDiamondController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
+            throw new NotModifiedResponse();
+        }
 
         ColoredDiamondDao dao = Database.getInstance().jdbi.onDemand(ColoredDiamondDao.class);
         ColoredDiamond cd = dao.findByLotId(id);
@@ -19,6 +36,15 @@ public class ColoredDiamondController {
         if (cd == null) {
             throw new NotFoundResponse();
         }
+
+        LocalDateTime now;
+        if (itemsCache.containsKey(cd.lotId)) {
+            now = itemsCache.get(cd.lotId);
+        } else {
+            now = LocalDateTime.now();
+            itemsCache.put(cd.lotId, now);
+        }
+        ctx.header("Last-Modified", String.valueOf(now));
 
         ctx.json(cd);
         ctx.status(200);
@@ -55,6 +81,12 @@ public class ColoredDiamondController {
             cdd.insertColoredDiamond(cd);
 
             ColoredDiamond created = cdd.findByLotId(lotId);
+
+            LocalDateTime now = LocalDateTime.now();
+            itemsCache.put(created.lotId, now);
+            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+            ctx.header("Last-Modified", String.valueOf(now));
+
             ctx.json(created);
             ctx.status(201);
         }
@@ -62,6 +94,13 @@ public class ColoredDiamondController {
 
     public void update(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
+            throw new PreconditionFailedResponse();
+        }
 
         ColoredDiamond cd =
                 ctx.bodyValidator(ColoredDiamond.class)
@@ -81,16 +120,12 @@ public class ColoredDiamondController {
                         .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
-            // WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
             Item item = itemDao.getItemByLotId(id);
             if (item == null) {
                 throw new NotFoundResponse();
             }
             ColoredDiamondDao cdd = handle.attach(ColoredDiamondDao.class);
-            // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
-
-            // update item first then colored diamonds specific field
 
             Item updatedItem = new Item();
             updatedItem.lotId = id;
@@ -99,7 +134,6 @@ public class ColoredDiamondController {
                     cd.purchaseDate != null ? cd.purchaseDate : item.purchaseDate;
             updatedItem.origin = cd.origin != null ? cd.origin : item.origin;
             itemDao.updateItem(updatedItem);
-
 
             cdd.updateColoredDiamond(
                     id,
@@ -114,10 +148,13 @@ public class ColoredDiamondController {
                     cd.fancyColor,
                     cd.clarity);
 
-            // TODO:
-            // Return updated WhiteDiamond
-            // example ActionController::update
             ColoredDiamond updated = cdd.findByLotId(id);
+
+            LocalDateTime now = LocalDateTime.now();
+            itemsCache.put(updated.lotId, now);
+            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+            ctx.header("Last-Modified", String.valueOf(now));
+
             ctx.json(updated);
             ctx.status(200);
         }

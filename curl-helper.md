@@ -83,6 +83,14 @@ curl -i \
   http://localhost:8080/items/lifecycle/{id}
 ```
 
+### Get item's lifecycle using cache (via conditional request)
+
+```bash
+curl -i \
+  -X GET \
+  -H "If-Modified-Since: [datetime here]" \
+  http://localhost:8080/items/lifecycle/{id}
+```
 
 ### Update action by id if it is the most recent one
 
