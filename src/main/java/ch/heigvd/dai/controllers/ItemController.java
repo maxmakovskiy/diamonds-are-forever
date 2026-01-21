@@ -31,6 +31,7 @@ public class ItemController {
                 throw new NotFoundResponse();
             }
 
+            // delete first all action (cascade) then the item
             ActionDao actionDao = handle.attach(ActionDao.class);
             actionDao.deleteActionsForItem(id);
             itemDao.deleteItem(id);
