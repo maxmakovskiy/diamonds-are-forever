@@ -81,15 +81,15 @@ public class WhiteDiamondController {
             }
             // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
-            if (wd.stockName != null || wd.purchaseDate != null || wd.origin != null) {
-                Item updatedItem = new Item();
-                updatedItem.lotId = id;
-                updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
-                updatedItem.purchaseDate =
-                        wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
-                updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
-                itemDao.updateItem(updatedItem);
-            }
+
+            Item updatedItem = new Item();
+            updatedItem.lotId = id;
+            updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
+            updatedItem.purchaseDate =
+                    wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
+            updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
+            itemDao.updateItem(updatedItem);
+
 
             wdDao.updateWhiteDiamond(
                     id,

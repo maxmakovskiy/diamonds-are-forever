@@ -91,15 +91,15 @@ public class ColoredDiamondController {
             // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
             // update item first then colored diamonds specific field
-            if (cd.stockName != null || cd.purchaseDate != null || cd.origin != null) {
-                Item updatedItem = new Item();
-                updatedItem.lotId = id;
-                updatedItem.stockName = cd.stockName != null ? cd.stockName : item.stockName;
-                updatedItem.purchaseDate =
-                        cd.purchaseDate != null ? cd.purchaseDate : item.purchaseDate;
-                updatedItem.origin = cd.origin != null ? cd.origin : item.origin;
-                itemDao.updateItem(updatedItem);
-            }
+
+            Item updatedItem = new Item();
+            updatedItem.lotId = id;
+            updatedItem.stockName = cd.stockName != null ? cd.stockName : item.stockName;
+            updatedItem.purchaseDate =
+                    cd.purchaseDate != null ? cd.purchaseDate : item.purchaseDate;
+            updatedItem.origin = cd.origin != null ? cd.origin : item.origin;
+            itemDao.updateItem(updatedItem);
+
 
             cdd.updateColoredDiamond(
                     id,

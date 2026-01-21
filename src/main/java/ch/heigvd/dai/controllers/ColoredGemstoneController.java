@@ -86,15 +86,15 @@ public class ColoredGemstoneController {
             // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
             // update item first then colored gems specific field
-            if (cgs.stockName != null || cgs.purchaseDate != null || cgs.origin != null) {
-                Item updatedItem = new Item();
-                updatedItem.lotId = id;
-                updatedItem.stockName = cgs.stockName != null ? cgs.stockName : item.stockName;
-                updatedItem.purchaseDate =
-                        cgs.purchaseDate != null ? cgs.purchaseDate : item.purchaseDate;
-                updatedItem.origin = cgs.origin != null ? cgs.origin : item.origin;
-                itemDao.updateItem(updatedItem);
-            }
+
+            Item updatedItem = new Item();
+            updatedItem.lotId = id;
+            updatedItem.stockName = cgs.stockName != null ? cgs.stockName : item.stockName;
+            updatedItem.purchaseDate =
+                    cgs.purchaseDate != null ? cgs.purchaseDate : item.purchaseDate;
+            updatedItem.origin = cgs.origin != null ? cgs.origin : item.origin;
+            itemDao.updateItem(updatedItem);
+
 
             cgsd.updateColoredGemstone(
                     id,
