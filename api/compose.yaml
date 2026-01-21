@@ -1,40 +1,41 @@
 networks:
   diamonds-network:
+    external: true
 
 volumes:
   db-data:
 
 services:
   diamonds:
-    build:
-      context: .
-      dockerfile: ./compose/diamonds/Dockerfile
-    image: diamonds_local_javalin
-    container_name: diamonds_local_javalin
+    image: "ghcr.io/maxmakovskiy/diamonds_are_forever:${DIAMONDS_VERSION}"
     depends_on:
       postgresql:
         condition: service_healthy
     networks:
       - diamonds-network
-    ports:
-      - 8080:8080
+    expose:
+      - 8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.diamonds.entrypoints=https
+      - traefik.http.routers.diamonds.rule=Host(`${DIAMONDS_FULLY_QUALIFIED_DOMAIN_NAME}`)
 
   postgresql:
-    image: 'postgres:18'
+    image: 'postgres:${POSTGRES_VERSION}'
     networks:
       - diamonds-network
     # TODO: add secrets management?
+    # https://docs.docker.com/compose/how-tos/use-secrets/
     environment:
       - POSTGRES_USER=diamonds
       - POSTGRES_PASSWORD=diamonds
       - POSTGRES_DB=diamonds
     volumes:
-      - ./sql/:/docker-entrypoint-initdb.d:ro
+      - ./../sql/:/docker-entrypoint-initdb.d:ro
       - db-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U diamonds"]
       interval: 2s
       timeout: 5s
       retries: 20
-
 
