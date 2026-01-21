@@ -36,7 +36,6 @@ public interface ColoredDiamondDao {
             """)
     ColoredDiamond findByLotId(@Bind("lotId") int lotId);
 
-
     @SqlUpdate(
             """
             INSERT INTO diamonds_are_forever.colored_diamond (
@@ -107,12 +106,3 @@ public interface ColoredDiamondDao {
             @Bind("fancyColor") String fancyColor,
             @Bind("clarity") String clarity);
 }
-
-
-
-
-
-
-
-
-

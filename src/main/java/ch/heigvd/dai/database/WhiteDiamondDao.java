@@ -24,7 +24,6 @@ public interface WhiteDiamondDao {
                 length,
                 width,
                 depth,
-                gemType,
                 whiteScale,
                 clarity
             FROM diamonds_are_forever.item id
@@ -36,14 +35,13 @@ public interface WhiteDiamondDao {
 
     @SqlUpdate(
             """
-                INSERT INTO white_diamond (
-                    lotId
+                INSERT INTO diamonds_are_forever.white_diamond (
+                    lotId,
                     weightCt,
                     shape,
                     length,
                     width,
                     depth,
-                    gemType,
                     whiteScale,
                     clarity
                 ) VALUES (
@@ -53,7 +51,6 @@ public interface WhiteDiamondDao {
                     :length,
                     :width,
                     :depth,
-                    cast(:gemType as diamonds_are_forever.gem_type),
                     cast(:whiteScale as diamonds_are_forever.white_scale),
                     cast(:clarity as diamonds_are_forever.clarity)
                 )
@@ -77,7 +74,6 @@ public interface WhiteDiamondDao {
                     :length,
                     :width,
                     :depth,
-                    cast(:gemType as diamonds_are_forever.gem_type),
                     cast(:whiteScale as diamonds_are_forever.white_scale),
                     cast(:clarity as diamonds_are_forever.clarity)
                 ) WHERE lotId = :lotId
@@ -89,7 +85,6 @@ public interface WhiteDiamondDao {
             @Bind("length") double length,
             @Bind("width") double width,
             @Bind("depth") double depth,
-            @Bind("gemType") String gemType,
             @Bind("whiteScale") String whiteScale,
             @Bind("clarity") String clarity);
 }

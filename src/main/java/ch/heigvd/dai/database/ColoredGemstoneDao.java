@@ -93,11 +93,4 @@ public interface ColoredGemstoneDao {
             @Bind("gemType") String gemType,
             @Bind("gemColor") String gemColor,
             @Bind("treatment") String treatment);
-
-
-
-
-
 }
-
-

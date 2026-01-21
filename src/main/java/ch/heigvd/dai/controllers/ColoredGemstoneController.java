@@ -41,11 +41,12 @@ public class ColoredGemstoneController {
                         .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
-            ColoredGemstoneDao cgsd= handle.attach(ColoredGemstoneDao.class);
+            ColoredGemstoneDao cgsd = handle.attach(ColoredGemstoneDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
 
             int lotId =
-                    itemDao.insertItem(cgs.stockName, cgs.purchaseDate, cgs.origin, "colored gemstone");
+                    itemDao.insertItem(
+                            cgs.stockName, cgs.purchaseDate, cgs.origin, "colored gemstone");
             cgs.lotId = lotId;
 
             cgsd.insertColoredGemstone(cgs);
@@ -75,12 +76,14 @@ public class ColoredGemstoneController {
                         .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
-            //WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+            // WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
             Item item = itemDao.getItemByLotId(id);
-            if (item == null) {throw new NotFoundResponse();}
+            if (item == null) {
+                throw new NotFoundResponse();
+            }
             ColoredGemstoneDao cgsd = handle.attach(ColoredGemstoneDao.class);
-            //WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
+            // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
             // update item first then colored gems specific field
             if (cgs.stockName != null || cgs.purchaseDate != null || cgs.origin != null) {
@@ -104,11 +107,9 @@ public class ColoredGemstoneController {
                     cgs.gemColor,
                     cgs.treatment);
 
-
             ColoredGemstone updated = cgsd.findByLotId(id);
             ctx.json(updated);
             ctx.status(200);
         }
-
-
-}}
+    }
+}

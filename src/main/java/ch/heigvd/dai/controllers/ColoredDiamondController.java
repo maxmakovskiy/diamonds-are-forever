@@ -24,7 +24,6 @@ public class ColoredDiamondController {
         ctx.status(200);
     }
 
-
     public void create(Context ctx) {
         ColoredDiamond cd =
                 ctx.bodyValidator(ColoredDiamond.class)
@@ -44,10 +43,11 @@ public class ColoredDiamondController {
                         .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
-            ColoredDiamondDao  cdd= handle.attach(ColoredDiamondDao.class);
+            ColoredDiamondDao cdd = handle.attach(ColoredDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
 
-            // WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get(); -> should add some erorr msg ?
+            // WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get(); -> should add some
+            // erorr msg ?
             int lotId =
                     itemDao.insertItem(cd.stockName, cd.purchaseDate, cd.origin, "colored diamond");
             cd.lotId = lotId;
@@ -81,12 +81,14 @@ public class ColoredDiamondController {
                         .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
-            //WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+            // WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
             Item item = itemDao.getItemByLotId(id);
-            if (item == null) {throw new NotFoundResponse();}
+            if (item == null) {
+                throw new NotFoundResponse();
+            }
             ColoredDiamondDao cdd = handle.attach(ColoredDiamondDao.class);
-            //WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
+            // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
             // update item first then colored diamonds specific field
             if (cd.stockName != null || cd.purchaseDate != null || cd.origin != null) {
@@ -120,7 +122,4 @@ public class ColoredDiamondController {
             ctx.status(200);
         }
     }
-
-
-
 }

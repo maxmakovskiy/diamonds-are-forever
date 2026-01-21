@@ -25,27 +25,27 @@ public class WhiteDiamondController {
     }
 
     public void create(Context ctx) {
-        WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class)
-                .check(obj -> obj.stockName != null, "Missing stock name")
-                .check(obj -> obj.purchaseDate != null, "Missing purchase date")
-                .check(obj -> obj.origin != null, "Missing origin")
-                .check(obj -> obj.weightCt > 0, "Weight must be positive")
-                .check(obj -> obj.shape != null, "Missing shape")
-                .check(obj -> obj.length > 0, "Length must be positive")
-                .check(obj -> obj.width > 0, "Width must be positive")
-                .check(obj -> obj.depth > 0, "Depth must be positive")
-                .check(obj -> obj.gemType != null, "Missing gem type")
-                .check(obj -> obj.whiteScale != null, "Missing white Scale")
-                .check(obj -> obj.clarity != null, "Missing clarity")
-                .get();
+        WhiteDiamond wd =
+                ctx.bodyValidator(WhiteDiamond.class)
+                        .check(obj -> obj.stockName != null, "Missing stock name")
+                        .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+                        .check(obj -> obj.origin != null, "Missing origin")
+                        .check(obj -> obj.weightCt > 0, "Weight must be positive")
+                        .check(obj -> obj.shape != null, "Missing shape")
+                        .check(obj -> obj.length > 0, "Length must be positive")
+                        .check(obj -> obj.width > 0, "Width must be positive")
+                        .check(obj -> obj.depth > 0, "Depth must be positive")
+                        .check(obj -> obj.whiteScale != null, "Missing white Scale")
+                        .check(obj -> obj.clarity != null, "Missing clarity")
+                        .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
             WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
 
-            //WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
+            // WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
             int lotId =
-                    itemDao.insertItem(wd.stockName, wd.purchaseDate, wd.origin, wd.type);
+                    itemDao.insertItem(wd.stockName, wd.purchaseDate, wd.origin, "white diamond");
             wd.lotId = lotId;
 
             wdDao.insertWhiteDiamond(wd);
@@ -59,26 +59,27 @@ public class WhiteDiamondController {
     public void update(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
 
-        WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class)
-                .check(obj -> obj.stockName != null, "Missing stock name")
-                .check(obj -> obj.purchaseDate != null, "Missing purchase date")
-                .check(obj -> obj.origin != null, "Missing origin")
-                .check(obj -> obj.weightCt > 0, "Weight must be positive")
-                .check(obj -> obj.shape != null, "Missing shape")
-                .check(obj -> obj.length > 0, "Length must be positive")
-                .check(obj -> obj.width > 0, "Width must be positive")
-                .check(obj -> obj.depth > 0, "Depth must be positive")
-                .check(obj -> obj.gemType != null, "Missing gem type")
-                .check(obj -> obj.whiteScale != null, "Missing white Scale")
-                .check(obj -> obj.clarity != null, "Missing clarity")
-                .get();
+        WhiteDiamond wd =
+                ctx.bodyValidator(WhiteDiamond.class)
+                        .check(obj -> obj.stockName != null, "Missing stock name")
+                        .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+                        .check(obj -> obj.origin != null, "Missing origin")
+                        .check(obj -> obj.weightCt > 0, "Weight must be positive")
+                        .check(obj -> obj.shape != null, "Missing shape")
+                        .check(obj -> obj.length > 0, "Length must be positive")
+                        .check(obj -> obj.width > 0, "Width must be positive")
+                        .check(obj -> obj.depth > 0, "Depth must be positive")
+                        .check(obj -> obj.clarity != null, "Missing clarity")
+                        .get();
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
             WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
             ItemDao itemDao = handle.attach(ItemDao.class);
             Item item = itemDao.getItemByLotId(id);
-            if (item == null) {throw new NotFoundResponse();}
-            //WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
+            if (item == null) {
+                throw new NotFoundResponse();
+            }
+            // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
             if (wd.stockName != null || wd.purchaseDate != null || wd.origin != null) {
                 Item updatedItem = new Item();

@@ -23,7 +23,7 @@ public interface ItemDao {
                     cast(:type as diamonds_are_forever.item_category)
                 )
             """)
-    @GetGeneratedKeys("diamonds_are_forever.item.lotId")
+    @GetGeneratedKeys("lotid")
     int insertItem(
             @Bind("stockName") String stockName,
             @Bind("purchaseDate") OffsetDateTime purchaseDate,
