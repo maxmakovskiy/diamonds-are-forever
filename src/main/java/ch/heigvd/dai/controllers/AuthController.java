@@ -41,4 +41,21 @@ public class AuthController {
         }
         ctx.status(HttpStatus.NO_CONTENT);
     }
+
+    public void getProfile(Context ctx) {
+        String uerId = ctx.sessionAttribute(USER_ID);
+        if (uerId == null || uerId.isEmpty()) {
+            throw new UnauthorizedResponse();
+        }
+
+        EmployeeDao dao = Database.getInstance().jdbi.onDemand(EmployeeDao.class);
+        Employee user = dao.findById(Integer.parseInt(uerId));
+
+        if (user == null) {
+            throw new UnauthorizedResponse();
+        }
+
+        ctx.json(user);
+        ctx.status(HttpStatus.OK);
+    }
 }

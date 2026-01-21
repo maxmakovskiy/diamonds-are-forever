@@ -23,7 +23,7 @@ public interface ItemDao {
                     cast(:type as diamonds_are_forever.item_category)
                 )
             """)
-    @GetGeneratedKeys("diamonds_are_forever.item.lotId")
+    @GetGeneratedKeys("lotid")
     int insertItem(
             @Bind("stockName") String stockName,
             @Bind("purchaseDate") OffsetDateTime purchaseDate,
@@ -48,4 +48,29 @@ public interface ItemDao {
 
     @SqlQuery("SELECT * FROM diamonds_are_forever.item WHERE lotId = :lotId")
     Item getItemByLotId(@Bind("lotId") int lotId);
+
+    @SqlUpdate("DELETE FROM diamonds_are_forever.item WHERE lotId = :lotId")
+    void deleteItem(@Bind("lotId") int lotId);
+
+    @SqlQuery(
+            """
+            SELECT DISTINCT i.*
+            FROM diamonds_are_forever.item i
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM diamonds_are_forever.action a
+                WHERE a.lotId = i.lotId
+                AND a.category = 'sale'
+            )
+            ORDER BY i.purchaseDate
+            """)
+    List<Item> getAvailableItems();
+
+    @SqlQuery(
+            """
+            SELECT * FROM diamonds_are_forever.item
+            WHERE type = cast(:type as diamonds_are_forever.item_category)
+            ORDER BY purchaseDate
+            """)
+    List<Item> getItemsByType(@Bind("type") String type);
 }

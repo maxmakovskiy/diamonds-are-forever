@@ -13,4 +13,11 @@ public interface EmployeeDao {
             WHERE email = :email
             """)
     Employee findByEmail(@Bind("email") String email);
+
+    @SqlQuery(
+            """
+            SELECT * FROM diamonds_are_forever.employee
+            WHERE employeeId = :employeeId
+            """)
+    Employee findById(@Bind("employeeId") int employeeId);
 }

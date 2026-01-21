@@ -50,20 +50,26 @@ public class Main {
         AuthController authController = new AuthController();
         app.post("/sign-in", authController::login, Role.ANYONE);
         app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
+        app.get("/profile", authController::getProfile, Role.AUTHENTICATED);
 
         ItemController itemController = new ItemController();
         app.get("/items", itemController::getAllItems, Role.ANYONE);
+        app.delete("/items/{id}", itemController::deleteItem, Role.AUTHENTICATED);
 
         WhiteDiamondController whiteDiamondController = new WhiteDiamondController();
         app.get("/white-diamonds/{id}", whiteDiamondController::getOne, Role.ANYONE);
-        app.put("/white-diamonds/{id}", whiteDiamondController::update, Role.ANYONE);
+        app.put("/white-diamonds/{id}", whiteDiamondController::update, Role.AUTHENTICATED);
         app.post("/white-diamonds", whiteDiamondController::create, Role.AUTHENTICATED);
 
         ColoredDiamondController coloredDiamondController = new ColoredDiamondController();
         app.get("/colored-diamonds/{id}", coloredDiamondController::getOne, Role.ANYONE);
+        app.put("/colored-diamonds/{id}", coloredDiamondController::update, Role.AUTHENTICATED);
+        app.post("/colored-diamonds", coloredDiamondController::create, Role.AUTHENTICATED);
 
         ColoredGemstoneController coloredGemstoneController = new ColoredGemstoneController();
         app.get("/colored-gemstones/{id}", coloredGemstoneController::getOne, Role.ANYONE);
+        app.put("/colored-gemstones/{id}", coloredGemstoneController::update, Role.AUTHENTICATED);
+        app.post("/colored-gemstones", coloredGemstoneController::create, Role.AUTHENTICATED);
 
         ActionController actionController = new ActionController();
         app.get("/items/lifecycle/{id}", actionController::getAllForItem, Role.ANYONE);

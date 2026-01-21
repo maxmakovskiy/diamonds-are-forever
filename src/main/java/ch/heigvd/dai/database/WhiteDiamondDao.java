@@ -35,8 +35,8 @@ public interface WhiteDiamondDao {
 
     @SqlUpdate(
             """
-                INSERT INTO white_diamond (
-                    lotId
+                INSERT INTO diamonds_are_forever.white_diamond (
+                    lotId,
                     weightCt,
                     shape,
                     length,
