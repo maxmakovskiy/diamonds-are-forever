@@ -104,7 +104,7 @@ public class WhiteDiamondController {
             // TODO:
             // Return updated WhiteDiamond
             // example ActionController::update
-            WhiteDiamond created = wdDao.findByLotId(wd.lotId);
+            WhiteDiamond created = wdDao.findByLotId(id);
             ctx.json(created);
             ctx.status(200);
         }
