@@ -13,12 +13,17 @@ public class Database {
 
     public final Jdbi jdbi;
 
-    // TODO:
-    // Add secrets management
     private Database() {
         jdbi =
-                 Jdbi.create("jdbc:postgresql://postgresql:5432/diamonds", "diamonds", "diamonds")
-                //Jdbi.create("jdbc:localhost://postgresql:5432/diamonds", "diamonds", "diamonds")
+                Jdbi.create(
+                                "jdbc:postgresql://"
+                                        + System.getenv("POSTGRES_HOST")
+                                        + ":"
+                                        + System.getenv("POSTGRES_PORT")
+                                        + "/"
+                                        + System.getenv("POSTGRES_DB"),
+                                System.getenv("POSTGRES_USER"),
+                                System.getenv("POSTGRES_PASSWORD"))
                         .installPlugin(new PostgresPlugin())
                         .installPlugin(new SqlObjectPlugin());
     }
