@@ -7,9 +7,17 @@ import ch.heigvd.dai.models.ColoredGemstone;
 import ch.heigvd.dai.models.Item;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ColoredGemstoneController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public ColoredGemstoneController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
 
@@ -94,7 +102,6 @@ public class ColoredGemstoneController {
                     cgs.purchaseDate != null ? cgs.purchaseDate : item.purchaseDate;
             updatedItem.origin = cgs.origin != null ? cgs.origin : item.origin;
             itemDao.updateItem(updatedItem);
-
 
             cgsd.updateColoredGemstone(
                     id,

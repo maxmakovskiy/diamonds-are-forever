@@ -7,9 +7,17 @@ import ch.heigvd.dai.models.ColoredDiamond;
 import ch.heigvd.dai.models.Item;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ColoredDiamondController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public ColoredDiamondController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
 
@@ -99,7 +107,6 @@ public class ColoredDiamondController {
                     cd.purchaseDate != null ? cd.purchaseDate : item.purchaseDate;
             updatedItem.origin = cd.origin != null ? cd.origin : item.origin;
             itemDao.updateItem(updatedItem);
-
 
             cdd.updateColoredDiamond(
                     id,

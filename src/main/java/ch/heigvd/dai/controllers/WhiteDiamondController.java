@@ -7,9 +7,17 @@ import ch.heigvd.dai.models.Item;
 import ch.heigvd.dai.models.WhiteDiamond;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class WhiteDiamondController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public WhiteDiamondController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getOne(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
 
@@ -81,7 +89,6 @@ public class WhiteDiamondController {
             }
             // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
-
             Item updatedItem = new Item();
             updatedItem.lotId = id;
             updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
@@ -89,7 +96,6 @@ public class WhiteDiamondController {
                     wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
             updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
             itemDao.updateItem(updatedItem);
-
 
             wdDao.updateWhiteDiamond(
                     id,

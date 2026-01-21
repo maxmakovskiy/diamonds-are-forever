@@ -8,13 +8,30 @@ import ch.heigvd.dai.models.Item;
 import io.javalin.http.ConflictResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.http.NotModifiedResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ActionController {
+    private final ConcurrentMap<Integer, LocalDateTime> lifecyclesCache;
+
+    public ActionController(ConcurrentMap<Integer, LocalDateTime> lifecyclesCache) {
+        this.lifecyclesCache = lifecyclesCache;
+    }
+
     public void getAllForItem(Context ctx) {
         Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+        LocalDateTime lastKnownModification =
+                ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
+
+        if (lastKnownModification != null
+                && lifecyclesCache.get(id).equals(lastKnownModification)) {
+            throw new NotModifiedResponse();
+        }
 
         try (Handle handle = Database.getInstance().jdbi.open()) {
             ItemDao itemDao = handle.attach(ItemDao.class);
@@ -26,6 +43,18 @@ public class ActionController {
 
             ActionDao actionDao = handle.attach(ActionDao.class);
             List<Action> actions = actionDao.getActionsForItem(id);
+
+            // after having fetched data from DB
+            // store put it in cache
+            LocalDateTime now;
+            if (lifecyclesCache.containsKey(id)) {
+                now = lifecyclesCache.get(id);
+            } else {
+                now = LocalDateTime.now();
+                lifecyclesCache.put(id, now);
+            }
+            ctx.header("Last-Modified", String.valueOf(now));
+
             ctx.json(actions);
             ctx.status(200);
         }
@@ -47,6 +76,13 @@ public class ActionController {
                 throw new ConflictResponse();
             }
             actionDao.deleteActionById(id);
+
+            // NOTE:
+            // When deletion is successful we invalidate
+            // lifecycle (all the actions) for item (lotId)
+            LocalDateTime now = LocalDateTime.now();
+            lifecyclesCache.put(existingAction.lotId, now);
+
             ctx.status(200);
         }
     }
@@ -98,6 +134,16 @@ public class ActionController {
             }
 
             Action createdAction = actionDao.createAction(action);
+
+            lifecyclesCache.put(createdAction.actionId, LocalDateTime.now());
+
+            // NOTE:
+            // The same for creation as for deletion.
+            // When creation is successful we invalidate
+            // lifecycle (all the actions) for item (lotId)
+            LocalDateTime now = LocalDateTime.now();
+            lifecyclesCache.put(createdAction.lotId, now);
+
             ctx.json(createdAction);
             ctx.status(200);
         }

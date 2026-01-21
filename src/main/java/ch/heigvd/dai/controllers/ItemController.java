@@ -6,10 +6,18 @@ import ch.heigvd.dai.database.ItemDao;
 import ch.heigvd.dai.models.Item;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ItemController {
+    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+
+    public ItemController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+        this.itemsCache = itemsCache;
+    }
+
     public void getAllItems(Context ctx) {
         String isAvailable = ctx.queryParam("isAvailable");
         boolean filterAvailable = "true".equalsIgnoreCase(isAvailable);
