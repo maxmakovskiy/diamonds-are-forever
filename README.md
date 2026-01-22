@@ -900,7 +900,7 @@ docker volume rm api_db-data
 curl -i \
   -X POST \
   -H "Content-Type: application/json" \
-  -c cookie.txt
+  -c cookie.txt \
   -d '{"email":"john.smith@example.com"}' \
   https://diamonds.ddnsfree.com/sign-in
 ```
