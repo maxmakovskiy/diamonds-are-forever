@@ -676,13 +676,7 @@ The response body is empty
 git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 ````
 
-2. Build it
-
-````bash
-./mvnw dependency:go-offline clean compile package
-````
-
-3. Run docker compose configuration for the development
+2. Run docker compose configuration for the development
 
 ````bash
 docker compose -f api/dev-compose.yaml
@@ -690,12 +684,16 @@ docker compose -f api/dev-compose.yaml
 
 It is going to:
 
-- build docker image with the application locally (if it's been running for the first time)
+- compile and build docker image with the application locally (if it's been running for the first time)
 - pull database image and start its container  
 
-4. Everytime you are doing the changes you need to basically rebuild image with application.
+3. Everytime you are doing the changes you need to basically rebuild image with application.
 
-5. (optional) To avoid annoying steps above you can run `re-build-diamonds.sh`. 
+````bash
+docker compose -f api/dev-compose.yaml build diamonds
+````
+
+4. (optional) To avoid annoying steps above you can run `re-build-diamonds.sh`. 
 It will basically do all the steps above for you.
 
 ````bash
@@ -703,7 +701,6 @@ $ cat re-build-diamonds.sh
 #!/bin/bash
 docker compose -f api/dev-compose.yaml down
 ./mvnw spotless:apply
-./mvnw clean package
 docker compose -f api/dev-compose.yaml build diamonds
 docker compose -f api/dev-compose.yaml up -d
 ````
@@ -819,19 +816,13 @@ Name:   diamonds.ddnsfree.com
 Address: 158.158.120.68
 ````
 
-5. Locally (assume repository has been already cloned), build the application: 
-
-````bash
-./mvnw dependency:go-offline clean compile package
-````
-
-6. Build the Docker image
+5. Build the Docker image with the app
 
 ```bash
 docker build -t diamonds_are_forever .
 ```
 
-7. Push to the `ghcr.io` registry
+6. Push to the `ghcr.io` registry
 
 To accomplish it we need to:
 
@@ -845,44 +836,44 @@ docker tag diamonds_are_forever ghcr.io/<username>/diamonds_are_forever:latest
 docker push ghcr.io/<username>/diamonds_are_forever:latest
 ```
 
-8. On remote machine, clone the repository
+7. On remote machine, clone the repository
 
 ````bash
 git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 ````
 
-9. Pull the image with application from remote registry
+8. Pull the image with application from remote registry
 
 ```bash
 docker compose -f api/compose.yaml pull
 ```
 
-10. Start reverse proxy - `Traefik`
+9. Start reverse proxy - `Traefik`
 
 ````bash
 docker compose -f traefik/compose.yaml up -d
 ````
 
-11. Start application with database
+10. Start application with database
 
 ````bash
 docker compose -f api/compose.yaml up -d
 ````
 
-12. To stop running containers run
+11. To stop running containers run
 
 ````bash
 docker compose -f api/compose.yaml down
 docker compose -f traefik/compose.yaml down
 ````
 
-10. (optional) Check the logs
+12. (optional) Check the logs
 
 ````bash
 docker compose -f api/compose.yaml logs postgresql
 ````
 
-11. (optional) Remove volume created by posgresql to enfore re-populating DB
+13. (optional) Remove volume created by posgresql to enfore re-populating DB
 
 ````bash
 docker volume ls
