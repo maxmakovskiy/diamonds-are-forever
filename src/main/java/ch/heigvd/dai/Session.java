@@ -1,30 +1,29 @@
 package ch.heigvd.dai;
 
-import java.io.File;
-import org.eclipse.jetty.server.session.DefaultSessionCache;
-import org.eclipse.jetty.server.session.FileSessionDataStore;
-import org.eclipse.jetty.server.session.SessionCache;
-import org.eclipse.jetty.server.session.SessionHandler;
+import javax.sql.DataSource;
+import org.eclipse.jetty.server.session.*;
 
-// Taken from:
-// <a href="https://javalin.io/tutorials/jetty-session-handling">link</a>
+/* Taken from:
+ * <a href="https://javalin.io/tutorials/jetty-session-handling">link</a>
+ */
 public class Session {
-    public static SessionHandler fileSessionHandler() {
+    public static SessionHandler sqlSessionHandler(DataSource ds) {
         SessionHandler sessionHandler = new SessionHandler();
         SessionCache sessionCache = new DefaultSessionCache(sessionHandler);
-        sessionCache.setSessionDataStore(fileSessionDataStore());
+        sessionCache.setSessionDataStore(
+                jdbcDataStoreFactory(ds).getSessionDataStore(sessionHandler));
         sessionHandler.setSessionCache(sessionCache);
         sessionHandler.setHttpOnly(true);
+        // NOTE:
         // make additional changes to your SessionHandler here
         return sessionHandler;
     }
 
-    private static FileSessionDataStore fileSessionDataStore() {
-        FileSessionDataStore fileSessionDataStore = new FileSessionDataStore();
-        File baseDir = new File(System.getProperty("java.io.tmpdir"));
-        File storeDir = new File(baseDir, "javalin-session-store");
-        storeDir.mkdir();
-        fileSessionDataStore.setStoreDir(storeDir);
-        return fileSessionDataStore;
+    private static JDBCSessionDataStoreFactory jdbcDataStoreFactory(DataSource ds) {
+        DatabaseAdaptor databaseAdaptor = new DatabaseAdaptor();
+        databaseAdaptor.setDatasource(ds);
+        JDBCSessionDataStoreFactory jdbcSessionDataStoreFactory = new JDBCSessionDataStoreFactory();
+        jdbcSessionDataStoreFactory.setDatabaseAdaptor(databaseAdaptor);
+        return jdbcSessionDataStoreFactory;
     }
 }
