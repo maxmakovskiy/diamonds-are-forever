@@ -7,17 +7,17 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 @RegisterFieldMapper(Employee.class)
 public interface EmployeeDao {
-    @SqlQuery(
-            """
-            SELECT * FROM diamonds_are_forever.employee
-            WHERE email = :email
-            """)
-    Employee findByEmail(@Bind("email") String email);
+  @SqlQuery(
+      """
+      SELECT * FROM diamonds_are_forever.employee
+      WHERE email = :email
+      """)
+  Employee findByEmail(@Bind("email") String email);
 
-    @SqlQuery(
-            """
-            SELECT * FROM diamonds_are_forever.employee
-            WHERE employeeId = :employeeId
-            """)
-    Employee findById(@Bind("employeeId") int employeeId);
+  @SqlQuery(
+      """
+      SELECT * FROM diamonds_are_forever.employee
+      WHERE employeeId = :employeeId
+      """)
+  Employee findById(@Bind("employeeId") int employeeId);
 }

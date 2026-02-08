@@ -11,51 +11,49 @@ import jakarta.servlet.http.HttpSession;
 import java.util.concurrent.TimeUnit;
 
 public class AuthController {
-    public static final String USER_ID = "USER_ID";
+  public static final String USER_ID = "USER_ID";
 
-    public void login(Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS);
+  public void login(Context ctx) {
+    NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS);
 
-        Employee loginUser =
-                ctx.bodyValidator(Employee.class)
-                        .check(obj -> obj.email != null, "Missing email")
-                        .get();
+    Employee loginUser =
+        ctx.bodyValidator(Employee.class).check(obj -> obj.email != null, "Missing email").get();
 
-        System.out.println("User trying to login with email: " + loginUser.email);
-        EmployeeDao dao = Database.getInstance().jdbi.onDemand(EmployeeDao.class);
-        Employee user = dao.findByEmail(loginUser.email);
+    System.out.println("User trying to login with email: " + loginUser.email);
+    EmployeeDao dao = Database.getInstance().jdbi.onDemand(EmployeeDao.class);
+    Employee user = dao.findByEmail(loginUser.email);
 
-        if (user != null) {
-            ctx.sessionAttribute(USER_ID, String.valueOf(user.employeeId));
-            ctx.status(HttpStatus.NO_CONTENT);
-            return;
-        }
-
-        throw new UnauthorizedResponse();
+    if (user != null) {
+      ctx.sessionAttribute(USER_ID, String.valueOf(user.employeeId));
+      ctx.status(HttpStatus.NO_CONTENT);
+      return;
     }
 
-    public void logout(Context ctx) {
-        HttpSession s = ctx.req().getSession(false);
-        if (s != null) {
-            s.invalidate();
-        }
-        ctx.status(HttpStatus.NO_CONTENT);
+    throw new UnauthorizedResponse();
+  }
+
+  public void logout(Context ctx) {
+    HttpSession s = ctx.req().getSession(false);
+    if (s != null) {
+      s.invalidate();
+    }
+    ctx.status(HttpStatus.NO_CONTENT);
+  }
+
+  public void getProfile(Context ctx) {
+    String uerId = ctx.sessionAttribute(USER_ID);
+    if (uerId == null || uerId.isEmpty()) {
+      throw new UnauthorizedResponse();
     }
 
-    public void getProfile(Context ctx) {
-        String uerId = ctx.sessionAttribute(USER_ID);
-        if (uerId == null || uerId.isEmpty()) {
-            throw new UnauthorizedResponse();
-        }
+    EmployeeDao dao = Database.getInstance().jdbi.onDemand(EmployeeDao.class);
+    Employee user = dao.findById(Integer.parseInt(uerId));
 
-        EmployeeDao dao = Database.getInstance().jdbi.onDemand(EmployeeDao.class);
-        Employee user = dao.findById(Integer.parseInt(uerId));
-
-        if (user == null) {
-            throw new UnauthorizedResponse();
-        }
-
-        ctx.json(user);
-        ctx.status(HttpStatus.OK);
+    if (user == null) {
+      throw new UnauthorizedResponse();
     }
+
+    ctx.json(user);
+    ctx.status(HttpStatus.OK);
+  }
 }
