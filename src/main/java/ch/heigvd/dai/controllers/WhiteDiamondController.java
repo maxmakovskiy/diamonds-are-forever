@@ -14,139 +14,130 @@ import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class WhiteDiamondController {
-    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+  private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
 
-    public WhiteDiamondController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
-        this.itemsCache = itemsCache;
+  public WhiteDiamondController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+    this.itemsCache = itemsCache;
+  }
+
+  public void getOne(Context ctx) {
+    Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+    LocalDateTime lastKnownModification =
+        ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
+
+    if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
+      throw new NotModifiedResponse();
     }
 
-    public void getOne(Context ctx) {
-        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+    WhiteDiamondDao dao = Database.getInstance().jdbi.onDemand(WhiteDiamondDao.class);
+    WhiteDiamond wd = dao.findByLotId(id);
 
-        LocalDateTime lastKnownModification =
-                ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
-
-        if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
-            throw new NotModifiedResponse();
-        }
-
-        WhiteDiamondDao dao = Database.getInstance().jdbi.onDemand(WhiteDiamondDao.class);
-        WhiteDiamond wd = dao.findByLotId(id);
-
-        if (wd == null) {
-            throw new NotFoundResponse();
-        }
-
-        LocalDateTime now;
-        if (itemsCache.containsKey(wd.lotId)) {
-            now = itemsCache.get(wd.lotId);
-        } else {
-            now = LocalDateTime.now();
-            itemsCache.put(wd.lotId, now);
-        }
-        ctx.header("Last-Modified", String.valueOf(now));
-
-        ctx.json(wd);
-        ctx.status(200);
+    if (wd == null) {
+      throw new NotFoundResponse();
     }
 
-    public void create(Context ctx) {
-        WhiteDiamond wd =
-                ctx.bodyValidator(WhiteDiamond.class)
-                        .check(obj -> obj.stockName != null, "Missing stock name")
-                        .check(obj -> obj.purchaseDate != null, "Missing purchase date")
-                        .check(obj -> obj.origin != null, "Missing origin")
-                        .check(obj -> obj.weightCt > 0, "Weight must be positive")
-                        .check(obj -> obj.shape != null, "Missing shape")
-                        .check(obj -> obj.length > 0, "Length must be positive")
-                        .check(obj -> obj.width > 0, "Width must be positive")
-                        .check(obj -> obj.depth > 0, "Depth must be positive")
-                        .check(obj -> obj.whiteScale != null, "Missing white Scale")
-                        .check(obj -> obj.clarity != null, "Missing clarity")
-                        .get();
+    LocalDateTime now;
+    if (itemsCache.containsKey(wd.lotId)) {
+      now = itemsCache.get(wd.lotId);
+    } else {
+      now = LocalDateTime.now();
+      itemsCache.put(wd.lotId, now);
+    }
+    ctx.header("Last-Modified", String.valueOf(now));
 
-        try (Handle handle = Database.getInstance().jdbi.open()) {
-            WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
-            ItemDao itemDao = handle.attach(ItemDao.class);
+    ctx.json(wd);
+    ctx.status(200);
+  }
 
-            // WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
-            int lotId =
-                    itemDao.insertItem(wd.stockName, wd.purchaseDate, wd.origin, "white diamond");
-            wd.lotId = lotId;
+  public void create(Context ctx) {
+    WhiteDiamond wd =
+        ctx.bodyValidator(WhiteDiamond.class)
+            .check(obj -> obj.stockName != null, "Missing stock name")
+            .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+            .check(obj -> obj.origin != null, "Missing origin")
+            .check(obj -> obj.weightCt > 0, "Weight must be positive")
+            .check(obj -> obj.shape != null, "Missing shape")
+            .check(obj -> obj.length > 0, "Length must be positive")
+            .check(obj -> obj.width > 0, "Width must be positive")
+            .check(obj -> obj.depth > 0, "Depth must be positive")
+            .check(obj -> obj.whiteScale != null, "Missing white Scale")
+            .check(obj -> obj.clarity != null, "Missing clarity")
+            .get();
 
-            wdDao.insertWhiteDiamond(wd);
+    try (Handle handle = Database.getInstance().jdbi.open()) {
+      WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+      ItemDao itemDao = handle.attach(ItemDao.class);
 
-            WhiteDiamond created = wdDao.findByLotId(wd.lotId);
+      // WhiteDiamond item = ctx.bodyValidator(WhiteDiamond.class).get();
+      int lotId = itemDao.insertItem(wd.stockName, wd.purchaseDate, wd.origin, "white diamond");
+      wd.lotId = lotId;
 
-            LocalDateTime now = LocalDateTime.now();
-            itemsCache.put(created.lotId, now);
-            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
-            ctx.header("Last-Modified", String.valueOf(now));
+      wdDao.insertWhiteDiamond(wd);
 
-            ctx.json(created);
-            ctx.status(201);
-        }
+      WhiteDiamond created = wdDao.findByLotId(wd.lotId);
+
+      LocalDateTime now = LocalDateTime.now();
+      itemsCache.put(created.lotId, now);
+      itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+      ctx.header("Last-Modified", String.valueOf(now));
+
+      ctx.json(created);
+      ctx.status(201);
+    }
+  }
+
+  public void update(Context ctx) {
+    Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+    LocalDateTime lastKnownModification =
+        ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+
+    if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
+      throw new PreconditionFailedResponse();
     }
 
-    public void update(Context ctx) {
-        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+    WhiteDiamond wd =
+        ctx.bodyValidator(WhiteDiamond.class)
+            .check(obj -> obj.stockName != null, "Missing stock name")
+            .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+            .check(obj -> obj.origin != null, "Missing origin")
+            .check(obj -> obj.weightCt > 0, "Weight must be positive")
+            .check(obj -> obj.shape != null, "Missing shape")
+            .check(obj -> obj.length > 0, "Length must be positive")
+            .check(obj -> obj.width > 0, "Width must be positive")
+            .check(obj -> obj.depth > 0, "Depth must be positive")
+            .check(obj -> obj.clarity != null, "Missing clarity")
+            .get();
 
-        LocalDateTime lastKnownModification =
-                ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+    try (Handle handle = Database.getInstance().jdbi.open()) {
+      WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+      ItemDao itemDao = handle.attach(ItemDao.class);
 
-        if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
-            throw new PreconditionFailedResponse();
-        }
+      Item item = itemDao.getItemByLotId(id);
+      if (item == null) {
+        throw new NotFoundResponse();
+      }
 
-        WhiteDiamond wd =
-                ctx.bodyValidator(WhiteDiamond.class)
-                        .check(obj -> obj.stockName != null, "Missing stock name")
-                        .check(obj -> obj.purchaseDate != null, "Missing purchase date")
-                        .check(obj -> obj.origin != null, "Missing origin")
-                        .check(obj -> obj.weightCt > 0, "Weight must be positive")
-                        .check(obj -> obj.shape != null, "Missing shape")
-                        .check(obj -> obj.length > 0, "Length must be positive")
-                        .check(obj -> obj.width > 0, "Width must be positive")
-                        .check(obj -> obj.depth > 0, "Depth must be positive")
-                        .check(obj -> obj.clarity != null, "Missing clarity")
-                        .get();
+      Item updatedItem = new Item();
+      updatedItem.lotId = id;
+      updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
+      updatedItem.purchaseDate = wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
+      updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
+      itemDao.updateItem(updatedItem);
 
-        try (Handle handle = Database.getInstance().jdbi.open()) {
-            WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
-            ItemDao itemDao = handle.attach(ItemDao.class);
+      wdDao.updateWhiteDiamond(
+          id, wd.weightCt, wd.shape, wd.length, wd.width, wd.depth, wd.whiteScale, wd.clarity);
 
-            Item item = itemDao.getItemByLotId(id);
-            if (item == null) {
-                throw new NotFoundResponse();
-            }
+      WhiteDiamond updated = wdDao.findByLotId(id);
 
-            Item updatedItem = new Item();
-            updatedItem.lotId = id;
-            updatedItem.stockName = wd.stockName != null ? wd.stockName : item.stockName;
-            updatedItem.purchaseDate =
-                    wd.purchaseDate != null ? wd.purchaseDate : item.purchaseDate;
-            updatedItem.origin = wd.origin != null ? wd.origin : item.origin;
-            itemDao.updateItem(updatedItem);
+      LocalDateTime now = LocalDateTime.now();
+      itemsCache.put(updated.lotId, now);
+      itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+      ctx.header("Last-Modified", String.valueOf(now));
 
-            wdDao.updateWhiteDiamond(
-                    id,
-                    wd.weightCt,
-                    wd.shape,
-                    wd.length,
-                    wd.width,
-                    wd.depth,
-                    wd.whiteScale,
-                    wd.clarity);
-
-            WhiteDiamond updated = wdDao.findByLotId(id);
-
-            LocalDateTime now = LocalDateTime.now();
-            itemsCache.put(updated.lotId, now);
-            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
-            ctx.header("Last-Modified", String.valueOf(now));
-
-            ctx.json(updated);
-            ctx.status(200);
-        }
+      ctx.json(updated);
+      ctx.status(200);
     }
+  }
 }

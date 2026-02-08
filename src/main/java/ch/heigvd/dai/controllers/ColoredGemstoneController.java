@@ -14,146 +14,144 @@ import java.util.concurrent.ConcurrentMap;
 import org.jdbi.v3.core.Handle;
 
 public class ColoredGemstoneController {
-    private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
+  private final ConcurrentMap<Integer, LocalDateTime> itemsCache;
 
-    public ColoredGemstoneController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
-        this.itemsCache = itemsCache;
+  public ColoredGemstoneController(ConcurrentMap<Integer, LocalDateTime> itemsCache) {
+    this.itemsCache = itemsCache;
+  }
+
+  public void getOne(Context ctx) {
+    Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+    LocalDateTime lastKnownModification =
+        ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
+
+    if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
+      throw new NotModifiedResponse();
     }
 
-    public void getOne(Context ctx) {
-        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+    ColoredGemstoneDao dao = Database.getInstance().jdbi.onDemand(ColoredGemstoneDao.class);
+    ColoredGemstone cgs = dao.findByLotId(id);
 
-        LocalDateTime lastKnownModification =
-                ctx.headerAsClass("If-Modified-Since", LocalDateTime.class).getOrDefault(null);
-
-        if (lastKnownModification != null && itemsCache.get(id).equals(lastKnownModification)) {
-            throw new NotModifiedResponse();
-        }
-
-        ColoredGemstoneDao dao = Database.getInstance().jdbi.onDemand(ColoredGemstoneDao.class);
-        ColoredGemstone cgs = dao.findByLotId(id);
-
-        if (cgs == null) {
-            throw new NotFoundResponse();
-        }
-
-        LocalDateTime now;
-        if (itemsCache.containsKey(cgs.lotId)) {
-            now = itemsCache.get(cgs.lotId);
-        } else {
-            now = LocalDateTime.now();
-            itemsCache.put(cgs.lotId, now);
-        }
-        ctx.header("Last-Modified", String.valueOf(now));
-
-        ctx.json(cgs);
-        ctx.status(200);
+    if (cgs == null) {
+      throw new NotFoundResponse();
     }
 
-    public void create(Context ctx) {
-        ColoredGemstone cgs =
-                ctx.bodyValidator(ColoredGemstone.class)
-                        .check(obj -> obj.stockName != null, "Missing stock name")
-                        .check(obj -> obj.purchaseDate != null, "Missing purchase date")
-                        .check(obj -> obj.origin != null, "Missing origin")
-                        .check(obj -> obj.weightCt > 0, "Weight must be positive")
-                        .check(obj -> obj.shape != null, "Missing shape")
-                        .check(obj -> obj.length > 0, "Length must be positive")
-                        .check(obj -> obj.width > 0, "Width must be positive")
-                        .check(obj -> obj.depth > 0, "Depth must be positive")
-                        .check(obj -> obj.gemType != null, "Missing gem type")
-                        .check(obj -> obj.gemColor != null, "Missing gem color")
-                        .check(obj -> obj.treatment != null, "Missing treatment")
-                        .get();
+    LocalDateTime now;
+    if (itemsCache.containsKey(cgs.lotId)) {
+      now = itemsCache.get(cgs.lotId);
+    } else {
+      now = LocalDateTime.now();
+      itemsCache.put(cgs.lotId, now);
+    }
+    ctx.header("Last-Modified", String.valueOf(now));
 
-        try (Handle handle = Database.getInstance().jdbi.open()) {
-            ColoredGemstoneDao cgsd = handle.attach(ColoredGemstoneDao.class);
-            ItemDao itemDao = handle.attach(ItemDao.class);
+    ctx.json(cgs);
+    ctx.status(200);
+  }
 
-            int lotId =
-                    itemDao.insertItem(
-                            cgs.stockName, cgs.purchaseDate, cgs.origin, "colored gemstone");
-            cgs.lotId = lotId;
+  public void create(Context ctx) {
+    ColoredGemstone cgs =
+        ctx.bodyValidator(ColoredGemstone.class)
+            .check(obj -> obj.stockName != null, "Missing stock name")
+            .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+            .check(obj -> obj.origin != null, "Missing origin")
+            .check(obj -> obj.weightCt > 0, "Weight must be positive")
+            .check(obj -> obj.shape != null, "Missing shape")
+            .check(obj -> obj.length > 0, "Length must be positive")
+            .check(obj -> obj.width > 0, "Width must be positive")
+            .check(obj -> obj.depth > 0, "Depth must be positive")
+            .check(obj -> obj.gemType != null, "Missing gem type")
+            .check(obj -> obj.gemColor != null, "Missing gem color")
+            .check(obj -> obj.treatment != null, "Missing treatment")
+            .get();
 
-            cgsd.insertColoredGemstone(cgs);
+    try (Handle handle = Database.getInstance().jdbi.open()) {
+      ColoredGemstoneDao cgsd = handle.attach(ColoredGemstoneDao.class);
+      ItemDao itemDao = handle.attach(ItemDao.class);
 
-            ColoredGemstone created = cgsd.findByLotId(lotId);
+      int lotId =
+          itemDao.insertItem(cgs.stockName, cgs.purchaseDate, cgs.origin, "colored gemstone");
+      cgs.lotId = lotId;
 
-            LocalDateTime now = LocalDateTime.now();
-            itemsCache.put(created.lotId, now);
-            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
-            ctx.header("Last-Modified", String.valueOf(now));
+      cgsd.insertColoredGemstone(cgs);
 
-            ctx.json(created);
-            ctx.status(201);
-        }
+      ColoredGemstone created = cgsd.findByLotId(lotId);
+
+      LocalDateTime now = LocalDateTime.now();
+      itemsCache.put(created.lotId, now);
+      itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+      ctx.header("Last-Modified", String.valueOf(now));
+
+      ctx.json(created);
+      ctx.status(201);
+    }
+  }
+
+  public void update(Context ctx) {
+    Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+
+    LocalDateTime lastKnownModification =
+        ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+
+    if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
+      throw new PreconditionFailedResponse();
     }
 
-    public void update(Context ctx) {
-        Integer id = ctx.pathParamAsClass("id", Integer.class).get();
+    ColoredGemstone cgs =
+        ctx.bodyValidator(ColoredGemstone.class)
+            .check(obj -> obj.stockName != null, "Missing stock name")
+            .check(obj -> obj.purchaseDate != null, "Missing purchase date")
+            .check(obj -> obj.origin != null, "Missing origin")
+            .check(obj -> obj.weightCt > 0, "Weight must be positive")
+            .check(obj -> obj.shape != null, "Missing shape")
+            .check(obj -> obj.length > 0, "Length must be positive")
+            .check(obj -> obj.width > 0, "Width must be positive")
+            .check(obj -> obj.depth > 0, "Depth must be positive")
+            .check(obj -> obj.gemType != null, "Missing gem type")
+            .check(obj -> obj.gemColor != null, "Missing gem color")
+            .check(obj -> obj.treatment != null, "Missing treatment")
+            .get();
 
-        LocalDateTime lastKnownModification =
-                ctx.headerAsClass("If-Unmodified-Since", LocalDateTime.class).getOrDefault(null);
+    try (Handle handle = Database.getInstance().jdbi.open()) {
+      // WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
+      ItemDao itemDao = handle.attach(ItemDao.class);
+      Item item = itemDao.getItemByLotId(id);
+      if (item == null) {
+        throw new NotFoundResponse();
+      }
+      ColoredGemstoneDao cgsd = handle.attach(ColoredGemstoneDao.class);
+      // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
 
-        if (lastKnownModification != null && !itemsCache.get(id).equals(lastKnownModification)) {
-            throw new PreconditionFailedResponse();
-        }
+      // update item first then colored gems specific field
 
-        ColoredGemstone cgs =
-                ctx.bodyValidator(ColoredGemstone.class)
-                        .check(obj -> obj.stockName != null, "Missing stock name")
-                        .check(obj -> obj.purchaseDate != null, "Missing purchase date")
-                        .check(obj -> obj.origin != null, "Missing origin")
-                        .check(obj -> obj.weightCt > 0, "Weight must be positive")
-                        .check(obj -> obj.shape != null, "Missing shape")
-                        .check(obj -> obj.length > 0, "Length must be positive")
-                        .check(obj -> obj.width > 0, "Width must be positive")
-                        .check(obj -> obj.depth > 0, "Depth must be positive")
-                        .check(obj -> obj.gemType != null, "Missing gem type")
-                        .check(obj -> obj.gemColor != null, "Missing gem color")
-                        .check(obj -> obj.treatment != null, "Missing treatment")
-                        .get();
+      Item updatedItem = new Item();
+      updatedItem.lotId = id;
+      updatedItem.stockName = cgs.stockName != null ? cgs.stockName : item.stockName;
+      updatedItem.purchaseDate = cgs.purchaseDate != null ? cgs.purchaseDate : item.purchaseDate;
+      updatedItem.origin = cgs.origin != null ? cgs.origin : item.origin;
+      itemDao.updateItem(updatedItem);
 
-        try (Handle handle = Database.getInstance().jdbi.open()) {
-            // WhiteDiamondDao wdDao = handle.attach(WhiteDiamondDao.class);
-            ItemDao itemDao = handle.attach(ItemDao.class);
-            Item item = itemDao.getItemByLotId(id);
-            if (item == null) {
-                throw new NotFoundResponse();
-            }
-            ColoredGemstoneDao cgsd = handle.attach(ColoredGemstoneDao.class);
-            // WhiteDiamond wd = ctx.bodyValidator(WhiteDiamond.class).get();
+      cgsd.updateColoredGemstone(
+          id,
+          cgs.weightCt,
+          cgs.shape,
+          cgs.length,
+          cgs.width,
+          cgs.depth,
+          cgs.gemType,
+          cgs.gemColor,
+          cgs.treatment);
 
-            // update item first then colored gems specific field
+      ColoredGemstone updated = cgsd.findByLotId(id);
 
-            Item updatedItem = new Item();
-            updatedItem.lotId = id;
-            updatedItem.stockName = cgs.stockName != null ? cgs.stockName : item.stockName;
-            updatedItem.purchaseDate =
-                    cgs.purchaseDate != null ? cgs.purchaseDate : item.purchaseDate;
-            updatedItem.origin = cgs.origin != null ? cgs.origin : item.origin;
-            itemDao.updateItem(updatedItem);
+      LocalDateTime now = LocalDateTime.now();
+      itemsCache.put(updated.lotId, now);
+      itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
+      ctx.header("Last-Modified", String.valueOf(now));
 
-            cgsd.updateColoredGemstone(
-                    id,
-                    cgs.weightCt,
-                    cgs.shape,
-                    cgs.length,
-                    cgs.width,
-                    cgs.depth,
-                    cgs.gemType,
-                    cgs.gemColor,
-                    cgs.treatment);
-
-            ColoredGemstone updated = cgsd.findByLotId(id);
-
-            LocalDateTime now = LocalDateTime.now();
-            itemsCache.put(updated.lotId, now);
-            itemsCache.remove(ItemController.RESERVED_ID_TO_ALL_ITEMS);
-            ctx.header("Last-Modified", String.valueOf(now));
-
-            ctx.json(updated);
-            ctx.status(200);
-        }
+      ctx.json(updated);
+      ctx.status(200);
     }
+  }
 }

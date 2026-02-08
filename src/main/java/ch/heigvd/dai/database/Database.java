@@ -17,41 +17,41 @@ import org.jdbi.v3.sqlobject.SqlObjectPlugin;
  * Java
  */
 public class Database {
-    private static final String url;
-    private static final HikariDataSource dataSource;
-    public final Jdbi jdbi;
+  private static final String url;
+  private static final HikariDataSource dataSource;
+  public final Jdbi jdbi;
 
-    static {
-        url =
-                "jdbc:postgresql://"
-                        + System.getenv("POSTGRES_HOST")
-                        + ":"
-                        + System.getenv("POSTGRES_PORT")
-                        + "/"
-                        + System.getenv("POSTGRES_DB");
+  static {
+    url =
+        "jdbc:postgresql://"
+            + System.getenv("POSTGRES_HOST")
+            + ":"
+            + System.getenv("POSTGRES_PORT")
+            + "/"
+            + System.getenv("POSTGRES_DB");
 
-        dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(url);
-        dataSource.setUsername(System.getenv("POSTGRES_USER"));
-        dataSource.setPassword(System.getenv("POSTGRES_PASSWORD"));
-    }
+    dataSource = new HikariDataSource();
+    dataSource.setJdbcUrl(url);
+    dataSource.setUsername(System.getenv("POSTGRES_USER"));
+    dataSource.setPassword(System.getenv("POSTGRES_PASSWORD"));
+  }
 
-    private Database() {
-        jdbi =
-                Jdbi.create(dataSource)
-                        .installPlugin(new PostgresPlugin())
-                        .installPlugin(new SqlObjectPlugin());
-    }
+  private Database() {
+    jdbi =
+        Jdbi.create(dataSource)
+            .installPlugin(new PostgresPlugin())
+            .installPlugin(new SqlObjectPlugin());
+  }
 
-    public static HikariDataSource getDataSource() {
-        return dataSource;
-    }
+  public static HikariDataSource getDataSource() {
+    return dataSource;
+  }
 
-    public static Database getInstance() {
-        return Holder.INSTANCE;
-    }
+  public static Database getInstance() {
+    return Holder.INSTANCE;
+  }
 
-    private static class Holder {
-        public static final Database INSTANCE = new Database();
-    }
+  private static class Holder {
+    public static final Database INSTANCE = new Database();
+  }
 }

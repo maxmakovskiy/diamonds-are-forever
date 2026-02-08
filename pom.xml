@@ -93,9 +93,9 @@
                     </pom>
                     <java>
                         <googleJavaFormat>
-                            <formatJavadoc>true</formatJavadoc>
+                            <style>GOOGLE</style>
                             <reflowLongStrings>true</reflowLongStrings>
-                            <style>AOSP</style>
+                            <formatJavadoc>false</formatJavadoc>
                         </googleJavaFormat>
                         <importOrder/>
                         <removeUnusedImports/>
