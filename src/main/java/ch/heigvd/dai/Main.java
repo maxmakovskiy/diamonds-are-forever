@@ -1,9 +1,9 @@
 package ch.heigvd.dai;
 
-import static ch.heigvd.dai.Session.fileSessionHandler;
 import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 
 import ch.heigvd.dai.controllers.*;
+import ch.heigvd.dai.database.Database;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
@@ -30,7 +30,10 @@ public class Main {
                                                                             SerializationFeature
                                                                                     .WRITE_DATES_AS_TIMESTAMPS)));
                             config.jetty.modifyServletContextHandler(
-                                    handler -> handler.setSessionHandler(fileSessionHandler()));
+                                    handler ->
+                                            handler.setSessionHandler(
+                                                    Session.sqlSessionHandler(
+                                                            Database.getDataSource())));
 
                             config.validation.register(LocalDateTime.class, LocalDateTime::parse);
                         });

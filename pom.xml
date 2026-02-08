@@ -68,6 +68,12 @@
             <version>2.20.1</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Source: https://github.com/brettwooldridge/HikariCP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>7.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>
