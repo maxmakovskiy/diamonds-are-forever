@@ -40,7 +40,7 @@ public class Main {
         ctx -> {
           if (ctx.routeRoles().contains(Role.AUTHENTICATED)) {
             String id = ctx.sessionAttribute(USER_ID);
-            if (id == null) {
+            if (id == null || id.isEmpty()) {
               throw new UnauthorizedResponse();
             }
           }

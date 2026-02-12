@@ -83,10 +83,6 @@ public class AuthController {
     NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS);
 
     String userId = ctx.sessionAttribute(USER_ID);
-    if (userId == null || userId.isEmpty()) {
-      throw new UnauthorizedResponse();
-    }
-
     EmployeeDao dao = Database.getInstance().jdbi.onDemand(EmployeeDao.class);
     Employee user = dao.findById(Integer.parseInt(userId));
 
@@ -102,30 +98,20 @@ public class AuthController {
 
     byte[] oldPassword = passwords.oldPassword().getBytes(StandardCharsets.UTF_8);
 
-    if (user.isTmpPassword) {
-      if (Arrays.equals(oldPassword, user.password)) {
-        byte[] hashed =
-            Security.hash(
-                passwords.newPassword().getBytes(StandardCharsets.UTF_8), Security.generateSalt());
-        dao.changePassword(user.employeeId, hashed);
-        ctx.status(HttpStatus.OK);
-      } else {
-        throw new UnauthorizedResponse();
-      }
+    boolean isPasswordMatch =
+        user.isTmpPassword
+            ? Arrays.equals(oldPassword, user.password)
+            : Arrays.equals(
+                Security.hash(oldPassword, Security.extractSalt(user.password)), user.password);
 
+    if (isPasswordMatch) {
+      byte[] hashed =
+          Security.hash(
+              passwords.newPassword().getBytes(StandardCharsets.UTF_8), Security.generateSalt());
+      dao.changePassword(user.employeeId, hashed);
+      ctx.status(HttpStatus.OK);
     } else {
-      byte[] salt = Security.extractSalt(user.password);
-      byte[] hashedOld = Security.hash(oldPassword, salt);
-
-      if (Arrays.equals(hashedOld, user.password)) {
-        byte[] hashed =
-            Security.hash(
-                passwords.newPassword().getBytes(StandardCharsets.UTF_8), Security.generateSalt());
-        dao.changePassword(user.employeeId, hashed);
-        ctx.status(HttpStatus.OK);
-      } else {
-        throw new UnauthorizedResponse();
-      }
+      throw new UnauthorizedResponse();
     }
   }
 }
