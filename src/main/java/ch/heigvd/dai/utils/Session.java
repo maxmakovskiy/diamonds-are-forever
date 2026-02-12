@@ -1,4 +1,4 @@
-package ch.heigvd.dai;
+package ch.heigvd.dai.utils;
 
 import javax.sql.DataSource;
 import org.eclipse.jetty.server.session.*;

@@ -4,6 +4,7 @@ import static ch.heigvd.dai.controllers.AuthController.USER_ID;
 
 import ch.heigvd.dai.controllers.*;
 import ch.heigvd.dai.database.Database;
+import ch.heigvd.dai.utils.Session;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
@@ -39,7 +40,7 @@ public class Main {
         ctx -> {
           if (ctx.routeRoles().contains(Role.AUTHENTICATED)) {
             String id = ctx.sessionAttribute(USER_ID);
-            if (id == null) {
+            if (id == null || id.isEmpty()) {
               throw new UnauthorizedResponse();
             }
           }
@@ -59,6 +60,7 @@ public class Main {
     app.post("/sign-in", authController::login, Role.ANYONE);
     app.post("/sign-out", authController::logout, Role.AUTHENTICATED);
     app.get("/profile", authController::getProfile, Role.AUTHENTICATED);
+    app.post("/change-password", authController::changePassword, Role.AUTHENTICATED);
 
     ItemController itemController = new ItemController(itemsCache, lifecyclesCache);
     app.get("/items", itemController::getAllItems, Role.ANYONE);
