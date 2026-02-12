@@ -5,7 +5,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY mvnw .
 COPY ./.mvn ./.mvn
-RUN ./mvnw dependency:go-offline clean package -Dmaven.main.skip -Dmaven.test.skip && rm -r target
+RUN ./mvnw clean package -Dmaven.main.skip -Dmaven.test.skip && rm -r target
 
 COPY src ./src
 RUN ./mvnw clean compile package
