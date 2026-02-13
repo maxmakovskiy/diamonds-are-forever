@@ -68,6 +68,19 @@
             <version>2.20.1</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Source: https://github.com/brettwooldridge/HikariCP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>7.0.2</version>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>1.83</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -87,9 +100,9 @@
                     </pom>
                     <java>
                         <googleJavaFormat>
-                            <formatJavadoc>true</formatJavadoc>
+                            <style>GOOGLE</style>
                             <reflowLongStrings>true</reflowLongStrings>
-                            <style>AOSP</style>
+                            <formatJavadoc>false</formatJavadoc>
                         </googleJavaFormat>
                         <importOrder/>
                         <removeUnusedImports/>

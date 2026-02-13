@@ -79,6 +79,8 @@ CREATE TABLE employee
     firstName     TEXT NOT NULL,
     lastName      TEXT NOT NULL,
     email         TEXT UNIQUE NOT NULL,
+    isTmpPassword BOOLEAN NOT NULL DEFAULT TRUE,
+    password      BYTEA,
     role          role NOT NULL,
     isActive      BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (counterpartId) REFERENCES counterpart (counterpartId)

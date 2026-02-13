@@ -8,7 +8,7 @@ services:
   diamonds:
     build:
       context: ./../
-      dockerfile: Dockerfile
+      dockerfile: ./compose/javalin/Dockerfile
     image: diamonds_are_forever_local
     container_name: diamonds_are_forever_local
     depends_on:
@@ -45,3 +45,24 @@ services:
       timeout: 5s
       retries: 20
 
+  diamonds-vue:
+    build:
+      context: ./../diamonds-vue
+      dockerfile: ./../compose/vue/Dockerfile.dev
+    image: diamonds_vue_local
+    container_name: diamonds_vue_local
+#    depends_on:
+#      - diamonds
+    ports:
+      - "5173:5173"
+    develop:
+      watch:
+        - path: ./../diamonds-vue/src
+          target: /diamonds-vue/src
+          action: sync
+        - path: ./../diamonds-vue/package.json
+          target: /diamonds-vue/package.json
+          action: sync+restart
+        - path: ./../diamonds-vue/vite.config.js
+          target: /diamonds-vue/vite.config.js
+          action: sync+restart

@@ -7,7 +7,11 @@ volumes:
 
 services:
   diamonds:
-    image: "ghcr.io/maxmakovskiy/diamonds_are_forever:${DIAMONDS_VERSION}"
+    build:
+      context: ./../
+      dockerfile: ./compose/javalin/Dockerfile
+    image: diamonds_are_forever_prod
+    container_name: diamonds_are_forever_prod
     depends_on:
       postgresql:
         condition: service_healthy
@@ -22,6 +26,7 @@ services:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - DIAMONDS_APP_PORT=${DIAMONDS_APP_PORT}
+      - VUE_FULLY_QUALIFIED_DOMAIN_NAME=${VUE_FULLY_QUALIFIED_DOMAIN_NAME}
     labels:
       - traefik.enable=true
       - traefik.http.routers.diamonds.entrypoints=https
@@ -45,4 +50,22 @@ services:
       interval: 2s
       timeout: 5s
       retries: 20
+
+  diamonds-vue:
+    build:
+      context: ./../diamonds-vue
+      dockerfile: ./../compose/vue/Dockerfile
+    image: diamonds_vue_prod
+    container_name: diamonds_vue_prod
+    networks:
+      - diamonds-network
+    depends_on:
+      - diamonds
+    expose:
+      - ${VUE_APP_PORT}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.diamonds-vue.entrypoints=https
+      - traefik.http.routers.diamonds-vue.rule=Host(`${VUE_FULLY_QUALIFIED_DOMAIN_NAME}`)
+
 

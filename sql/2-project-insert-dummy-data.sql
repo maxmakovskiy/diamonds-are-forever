@@ -54,23 +54,23 @@ INSERT INTO counterpart (counterpartId, name, phoneNumber, addressShort, city, p
 (23, 'Bangkok Gem Processing', '+66-2-234-9999', 'Jewelry Trade Center', 'Bangkok', '10500', 'Thailand', 'service@bangkokprocess.th', TRUE, 'Manufacturer');
 
 
-INSERT INTO employee (employeeId, counterpartId, firstName, lastName, email, role, isActive) VALUES
+INSERT INTO employee (employeeId, counterpartId, firstName, lastName, email, role, isActive, password) VALUES
 -- NY Office Staff
-(1, 1, 'John', 'Smith', 'john.smith@example.com', 'Chief', TRUE),
-(2, 1, 'Sarah', 'Johnson', 'sarah.johnson@example.com', 'Admin', TRUE),
-(3, 1, 'Michael', 'Williams', 'michael.williams@example.com', 'Sales', TRUE),
-(4, 1, 'Emily', 'Brown', 'emily.brown@example.com', 'Accountant', TRUE),
+(1, 1, 'John', 'Smith', 'john.smith@example.com', 'Chief', TRUE, 'johnsmith'),
+(2, 1, 'Sarah', 'Johnson', 'sarah.johnson@example.com', 'Admin', TRUE, 'sarahjohnson'),
+(3, 1, 'Michael', 'Williams', 'michael.williams@example.com', 'Sales', TRUE, 'michaelwilliams'),
+(4, 1, 'Emily', 'Brown', 'emily.brown@example.com', 'Accountant', TRUE, 'emilybrown'),
 -- HK Office Staff
-(5, 2, 'David', 'Chen', 'david.chen@example.com', 'Chief', TRUE),
-(6, 2, 'Lisa', 'Wong', 'lisa.wong@example.com', 'Admin', TRUE),
-(7, 2, 'Kevin', 'Lee', 'kevin.lee@example.com', 'Sales', TRUE),
+(5, 2, 'David', 'Chen', 'david.chen@example.com', 'Chief', TRUE, 'davidchen'),
+(6, 2, 'Lisa', 'Wong', 'lisa.wong@example.com', 'Admin', TRUE, 'lisawong'),
+(7, 2, 'Kevin', 'Lee', 'kevin.lee@example.com', 'Sales', TRUE, 'kevinlee'),
 -- Geneva Office Staff
-(8, 3, 'Hans', 'Mueller', 'hans.mueller@example.com', 'Chief', TRUE),
-(9, 3, 'Anna', 'Schmidt', 'anna.schmidt@example.com', 'Sales', TRUE),
-(10, 3, 'Thomas', 'Weber', 'thomas.weber@example.comm', 'Accountant', TRUE),
+(8, 3, 'Hans', 'Mueller', 'hans.mueller@example.com', 'Chief', TRUE, 'hansmueller'),
+(9, 3, 'Anna', 'Schmidt', 'anna.schmidt@example.com', 'Sales', TRUE, 'annaschmidt'),
+(10, 3, 'Thomas', 'Weber', 'thomas.weber@example.comm', 'Accountant', TRUE, 'thomasweber'),
 -- Tokyo Office Staff
-(11, 4, 'Yuki', 'Tanaka', 'yuki.tanaka@example.com', 'Chief', TRUE),
-(12, 4, 'Sakura', 'Yamamoto', 'sakura.yamamoto@example.com', 'Sales', TRUE);
+(11, 4, 'Yuki', 'Tanaka', 'yuki.tanaka@example.com', 'Chief', TRUE, 'yukitanaka'),
+(12, 4, 'Sakura', 'Yamamoto', 'sakura.yamamoto@example.com', 'Sales', TRUE, 'sakurayamamoto');
 
 
 -- White Diamonds (15 items)

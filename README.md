@@ -676,13 +676,7 @@ The response body is empty
 git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 ````
 
-2. Build it
-
-````bash
-./mvnw dependency:go-offline clean compile package
-````
-
-3. Run docker compose configuration for the development
+2. Run docker compose configuration for the development
 
 ````bash
 docker compose -f api/dev-compose.yaml
@@ -690,12 +684,16 @@ docker compose -f api/dev-compose.yaml
 
 It is going to:
 
-- build docker image with the application locally (if it's been running for the first time)
+- compile and build docker image with the application locally (if it's been running for the first time)
 - pull database image and start its container  
 
-4. Everytime you are doing the changes you need to basically rebuild image with application.
+3. Everytime you are doing the changes you need to basically rebuild image with application.
 
-5. (optional) To avoid annoying steps above you can run `re-build-diamonds.sh`. 
+````bash
+docker compose -f api/dev-compose.yaml build diamonds
+````
+
+4. (optional) To avoid annoying steps above you can run `re-build-diamonds.sh`. 
 It will basically do all the steps above for you.
 
 ````bash
@@ -703,7 +701,6 @@ $ cat re-build-diamonds.sh
 #!/bin/bash
 docker compose -f api/dev-compose.yaml down
 ./mvnw spotless:apply
-./mvnw clean package
 docker compose -f api/dev-compose.yaml build diamonds
 docker compose -f api/dev-compose.yaml up -d
 ````
@@ -819,19 +816,13 @@ Name:   diamonds.ddnsfree.com
 Address: 158.158.120.68
 ````
 
-5. Locally (assume repository has been already cloned), build the application: 
-
-````bash
-./mvnw dependency:go-offline clean compile package
-````
-
-6. Build the Docker image
+5. Build the Docker image with the app
 
 ```bash
 docker build -t diamonds_are_forever .
 ```
 
-7. Push to the `ghcr.io` registry
+6. Push to the `ghcr.io` registry
 
 To accomplish it we need to:
 
@@ -845,44 +836,44 @@ docker tag diamonds_are_forever ghcr.io/<username>/diamonds_are_forever:latest
 docker push ghcr.io/<username>/diamonds_are_forever:latest
 ```
 
-8. On remote machine, clone the repository
+7. On remote machine, clone the repository
 
 ````bash
 git clone https://github.com/maxmakovskiy/diamonds-are-forever.git
 ````
 
-9. Pull the image with application from remote registry
+8. Pull the image with application from remote registry
 
 ```bash
 docker compose -f api/compose.yaml pull
 ```
 
-10. Start reverse proxy - `Traefik`
+9. Start reverse proxy - `Traefik`
 
 ````bash
 docker compose -f traefik/compose.yaml up -d
 ````
 
-11. Start application with database
+10. Start application with database
 
 ````bash
 docker compose -f api/compose.yaml up -d
 ````
 
-12. To stop running containers run
+11. To stop running containers run
 
 ````bash
 docker compose -f api/compose.yaml down
 docker compose -f traefik/compose.yaml down
 ````
 
-10. (optional) Check the logs
+12. (optional) Check the logs
 
 ````bash
 docker compose -f api/compose.yaml logs postgresql
 ````
 
-11. (optional) Remove volume created by posgresql to enfore re-populating DB
+13. (optional) Remove volume created by posgresql to enfore re-populating DB
 
 ````bash
 docker volume ls
@@ -900,8 +891,8 @@ docker volume rm api_db-data
 curl -i \
   -X POST \
   -H "Content-Type: application/json" \
-  -c cookie.txt
-  -d '{"email":"john.smith@example.com"}' \
+  -c cookie.txt \
+  -d '{"email":"email here", "password": "password here"}' \
   https://diamonds.ddnsfree.com/sign-in
 ```
 
@@ -910,9 +901,7 @@ curl -i \
 curl -i -X POST \
   -H "Content-Type: application/json" \
   -c cookies.txt \
-  -d '{
-    "email": "john.smith@example.com"
-  }' \
+  -d '{"email":"john.smith@example.com", "password": "johnsmith"}' \
   https://diamonds.ddnsfree.com/sign-in
 ```
 
@@ -972,7 +961,36 @@ Content-Length: 136
 
 --- 
 
-### 4. Get current state of the inventory
+### 4. Change the passwords
+
+#### CURL template
+```bash
+curl -i \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -b cookie.txt \
+  -d '{"oldPassword":"old password here", "newPassword": "new password here"}' \
+  https://diamonds.ddnsfree.com/change-password
+```
+
+#### Input example
+```bash
+curl -i \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -b cookie.txt \
+  -d '{"oldPassword":"johnsmith", "newPassword": "notJohnSmith"}' \
+  https://diamonds.ddnsfree.com/change-password
+```
+
+#### Output example
+```bash
+tbd
+```
+
+---
+
+### 5. Get current state of the inventory
 
 #### CURL template
 ```bash
@@ -993,7 +1011,7 @@ Content-Length: 4117
 ```
 
 ---
-### 5. Get item's lifecycle
+### 6. Get item's lifecycle
 
 #### CURL template
 ```bash
@@ -1015,7 +1033,7 @@ Content-Length: 306
 
 ---
 
-### 6. Get details of a specific white diamond
+### 7. Get details of a specific white diamond
 
 #### CURL template
 ```bash
@@ -1041,7 +1059,7 @@ Content-Length: 315
 ```
 
 ---
-### 7. Update white diamond's info
+### 8. Update white diamond's info
 
 #### CURL template
 ```bash
@@ -1095,7 +1113,7 @@ Content-Length: 315
 {"lotId":1,"stockName":"WD-UPDATED","purchaseDate":"2026-01-21T10:00:00Z","origin":"South Africa","type":"white diamond","createdAt":"2026-01-21T08:57:40.621326Z","updatedAt":"2026-01-21T20:51:05.604464Z","weightCt":2.5,"shape":"Brilliant Cut","length":8.5,"width":8.3,"depth":5.2,"whiteScale":"E","clarity":"VVS2"}%    
 ```
 
-### 8. Create new white diamond
+### 9. Create new white diamond
 
 #### CURL template
 ```bash
@@ -1152,7 +1170,7 @@ Content-Length: 322
 
 ---
 
-### 9. Get details of colored diamond
+### 10. Get details of colored diamond
 
 #### CURL template
 ```bash
@@ -1180,7 +1198,7 @@ Content-Length: 394
 
 ---
 
-### 10. Update colored diamond info
+### 11. Update colored diamond info
 
 #### CURL template
 ```bash
@@ -1260,7 +1278,7 @@ Content-Length: 315
 
 ---
 
-### 11. Create new colored diamond
+### 12. Create new colored diamond
 
 #### CURL template
 ```bash
@@ -1327,7 +1345,7 @@ Content-Length: 399
 
 ---
 
-### 12. Get details of colored gemstone info
+### 13. Get details of colored gemstone info
 
 #### CURL template
 ```bash
@@ -1356,7 +1374,7 @@ Content-Length: 332
 
 ---
 
-### 13. Update colored gemstone info
+### 14. Update colored gemstone info
 
 #### CURL template
 ```bash
@@ -1415,7 +1433,7 @@ Content-Length: 341
 
 ---
 
-### 14. Create new colored gemstone
+### 15. Create new colored gemstone
 
 #### CURL template
 ```bash
@@ -1475,7 +1493,7 @@ Content-Length: 340
 
 ---
 
-### 15. Create a new action
+### 16. Create a new action
 
 #### CURL template
 ```bash
@@ -1533,7 +1551,7 @@ Content-Length: 327
 
 ---
 
-### 16. Delete action by id
+### 17. Delete action by id
 
 #### CURL template
 ```bash
