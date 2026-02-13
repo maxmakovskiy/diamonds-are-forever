@@ -40,7 +40,7 @@ public class Main {
                   cors -> {
                     cors.addRule(
                         it -> {
-                          it.allowHost("*.diamonds.ddnsfree.com");
+                          it.allowHost(System.getenv("VUE_FULLY_QUALIFIED_DOMAIN_NAME"));
                         });
                   });
             });

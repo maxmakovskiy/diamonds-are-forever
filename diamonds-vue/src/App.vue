@@ -14,7 +14,6 @@ onMounted(async () => {
         for (const item of response.data) {
             items.value.push(item)
         }
-        console.log(response)
     })
 });
 
