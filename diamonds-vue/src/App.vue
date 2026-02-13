@@ -8,7 +8,8 @@ const items = ref([]);
 
 onMounted(async () => {
   await axios
-    .get('http://localhost:8080/items')
+    // .get('http://localhost:8080/items')
+    .get('https://diamonds.ddnsfree.com/items')
     .then(response => {
         for (const item of response.data) {
             items.value.push(item)
