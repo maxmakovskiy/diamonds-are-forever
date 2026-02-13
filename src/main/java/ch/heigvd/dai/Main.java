@@ -36,11 +36,11 @@ public class Main {
               config.validation.register(LocalDateTime.class, LocalDateTime::parse);
 
               // https://javalin.io/plugins/cors#multiple-cors-configurations
-//              config.bundledPlugins.enableCors(cors -> {
-//                cors.addRule(it -> {
-//                  it.allowHost("example.com", "javalin.io");
-//                });
-//              });
+              //              config.bundledPlugins.enableCors(cors -> {
+              //                cors.addRule(it -> {
+              //                  it.allowHost("example.com", "javalin.io");
+              //                });
+              //              });
             });
 
     app.beforeMatched(
