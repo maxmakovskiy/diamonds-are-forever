@@ -40,7 +40,7 @@ public class Main {
                   cors -> {
                     cors.addRule(
                         it -> {
-                          it.allowHost(System.getenv("WILDCARD_DOMAIN_NAME"));
+                          it.allowHost("*.diamonds.ddnsfree.com");
                         });
                   });
             });
