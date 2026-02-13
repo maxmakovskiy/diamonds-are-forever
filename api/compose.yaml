@@ -55,7 +55,9 @@ services:
       context: ./../diamonds-vue
       dockerfile: ./../compose/vue/Dockerfile
     image: diamonds_vue_prod
-    container_name: diamonds_vue_local
+    container_name: diamonds_vue_prod
+    networks:
+      - diamonds-network
     depends_on:
       - diamonds
     expose:
