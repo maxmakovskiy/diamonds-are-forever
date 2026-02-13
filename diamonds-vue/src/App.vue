@@ -1,19 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { default as axios } from 'axios';
-// const axios = require("axios");
+import { ref, onMounted } from 'vue'
+import { default as axios } from 'axios'
+
+import InventoryItem from './components/InventoryItem.vue'
 
 const items = ref([]);
 
 onMounted(async () => {
   await axios
-    .get(
-        'https://diamonds.ddnsfree.com/items', { 
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-        }, 
-    })
+    .get('http://localhost:8080/items')
     .then(response => {
+        for (const item of response.data) {
+            items.value.push(item)
+        }
         console.log(response)
     })
 });
@@ -22,12 +21,11 @@ onMounted(async () => {
 </script>
 
 <template>
-    <ol>
-    <li v-for="item in items">
-    {{ item }}
-    </li>
-
-    </ol>
+    <InventoryItem
+        v-for="item in items"
+        :key="item.lotId"
+        :item="item"
+    />
 </template>
 
 <style scoped>
