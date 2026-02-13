@@ -26,6 +26,7 @@ services:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - DIAMONDS_APP_PORT=${DIAMONDS_APP_PORT}
+      - VUE_FULLY_QUALIFIED_DOMAIN_NAME=${VUE_FULLY_QUALIFIED_DOMAIN_NAME}
     labels:
       - traefik.enable=true
       - traefik.http.routers.diamonds.entrypoints=https
