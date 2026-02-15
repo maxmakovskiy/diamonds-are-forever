@@ -19,25 +19,17 @@ async function onSubmit(values) {
 </script>
 
 <template>
-  <v-layout justify="center" align-items="center">
-  <v-card
-    class="mx-auto my-8"
-    elevation="16"
-    width="30%"
-    height="45%"
-  >
-    <v-card-item>
-      <v-card-title>
-        Login
-      </v-card-title>
+  <div class="page-container">
+    <div class="form-container">
+      <div class="header">
+        <h2>Login</h2>
 
-      <v-card-subtitle>
-        Enter your credentials
-      </v-card-subtitle>
-    </v-card-item>
+        <p>
+          Enter your credentials
+        </p>
+      </div>
 
-    <v-card-text>
-      <Form class="form-container" @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
+      <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
         <div class="form-group">
             <label>Email</label>
             <Field name="username" type="text" class="form-control" :class="{ 'is-invalid': errors.username }" />
@@ -54,17 +46,42 @@ async function onSubmit(values) {
                 Login
             </button>
         </div>
-      </Form>     
+      </Form>
+
       <Alert />
-    </v-card-text>
-  </v-card>
-</v-layout>
+
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
 .form-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
+
+  min-height: 45%;
+  width: 35%;
+
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 1em;
+  box-shadow: 5px 3px 3px gray;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
 .form-group {
@@ -74,8 +91,6 @@ async function onSubmit(values) {
   margin: 0.5em 0;
 }
 
-.v-card {
-  border: 1pt solid black;
-}
+
 
 </style>
