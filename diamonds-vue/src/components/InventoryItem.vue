@@ -1,30 +1,30 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 
-defineProps(['item'])
+const props = defineProps(['item'])
+
+
+function capitalize(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+const title = computed(() => capitalize(props.item.type))
+
 
 </script>
 
 <template>
-  <div class="item">
-        <div>Id: {{ item.lotId }}</div>
-        <div>Stock name: {{ item.stockName }}</div>
+  <v-card
+    :subtitle="`Stock name: ${ item.stockName }`"
+    :title="title"
+  >
+    <v-card-text class="bg-surface-light pt-14">
+        <div>Origin: {{ item.origin }}</div>
         <div>Origin: {{ item.origin }}</div>
         <div>Purchase date: {{ item.purchaseDate }}</div>
-        <div>Type: {{ item.type }}</div>
-        <div>Updated: {{ item.updatedAt }}</div>
-        <div>Created: {{ item.createdAt }}</div>
-  </div>
+
+    </v-card-text>
+
+  </v-card>
 </template>
 
-<style scoped>
-.item {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  border: 1pt solid black;
-}
-
-
-</style>

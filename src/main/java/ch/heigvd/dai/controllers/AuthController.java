@@ -48,7 +48,10 @@ public class AuthController {
 
     if (Arrays.equals(hashed, user.password)) {
       ctx.sessionAttribute(USER_ID, String.valueOf(user.employeeId));
-      ctx.status(HttpStatus.NO_CONTENT);
+      // TODO:
+      // DO not send password (hash) back
+      ctx.json(user);
+      ctx.status(HttpStatus.OK);
     } else {
       throw new UnauthorizedResponse();
     }
