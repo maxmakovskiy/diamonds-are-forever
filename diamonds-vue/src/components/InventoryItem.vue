@@ -14,17 +14,18 @@ const title = computed(() => capitalize(props.item.type))
 </script>
 
 <template>
-  <v-card
-    :subtitle="`Stock name: ${ item.stockName }`"
-    :title="title"
+  <div class="container"
   >
-    <v-card-text class="bg-surface-light pt-14">
+    <h3>{{ title }}</h3>
+    <h4>{{ `Stock name: ${ item.stockName }` }}</h4>
+
+    <div class="details">
         <div>Origin: {{ item.origin }}</div>
         <div>Origin: {{ item.origin }}</div>
         <div>Purchase date: {{ item.purchaseDate }}</div>
 
-    </v-card-text>
+    </div>
 
-  </v-card>
+  </div>
 </template>
 
