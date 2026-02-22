@@ -25,8 +25,6 @@ export const router = createRouter({
     ]
 });
 
-/*
-// TODO: temp comment
 router.beforeEach(async (to) => {
     // clear alert on route change
     const alertStore = useAlertStore();
@@ -43,5 +41,4 @@ router.beforeEach(async (to) => {
         return '/sign-in';
     }
 });
-*/
 

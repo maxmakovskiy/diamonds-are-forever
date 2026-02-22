@@ -22,22 +22,15 @@ export const useAuthStore = defineStore("auth", {
                 
                 console.log("Auth store| login: " + resp);
 
-                if (200 <= resp.status || resp.status < 300) {
-                  // update pinia state
-                  this.user = resp.data;
-                  console.log(this.user)
+                // update pinia state
+                this.user = resp.data;
+                console.log(this.user)
 
-                  // redirect to previous url or default to home page
-                  if (this.returnUrl) {
-                    router.push(this.returnUrl);
-                  } else {
-                    router.push('/');
-                  }
-
+                // redirect to previous url or default to home page
+                if (this.returnUrl) {
+                  router.push(this.returnUrl);
                 } else {
-                  const alertStore = useAlertStore();
-                  alertStore.error(error);                
-                  console.log(error);
+                  router.push('/');
                 }
             } catch (error) {
                 const alertStore = useAlertStore();

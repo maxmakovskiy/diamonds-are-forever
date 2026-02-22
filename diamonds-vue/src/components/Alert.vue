@@ -8,7 +8,7 @@ const { alert } = storeToRefs(alertStore);
 </script>
 
 <template>
-    <div v-if="alert" id="alert-container">
+    <div v-if="alert" id="alert-container" :class="alert.type">
       <button @click="alertStore.clear()">&times;</button>
       <p><strong>{{alert.message}}</strong></p>
     </div>
@@ -19,12 +19,6 @@ const { alert } = storeToRefs(alertStore);
 #alert-container {
   font-size: 0.8em;
 
-  background-color: #ffad99;
-  color: #8d0801;
-  border: 3px solid #8d0801;
-  border-radius: 5px;
-  padding: 0.3em 0;
-
   display: flex;
   flex-direction: row;
   align-items: baseline;
@@ -33,18 +27,51 @@ const { alert } = storeToRefs(alertStore);
 
 #alert-container > button {
   background: transparent;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-right: 0.3em;
+}
+
+#alert-container > button:hover {
+  cursor: pointer;
+}
+
+.alert-danger {
+  background-color: #ffad99;
   color: #8d0801;
   border: 3px solid #8d0801;
   border-radius: 5px;
-  font-weight: bold;
+  padding: 0.3em 0;
 }
 
-
-#alert-container > button:hover {
-  background: #8d0801;
-  color: #ffad99;
+.alert-danger > button {
+  color: #8d0801;
   border: 3px solid #8d0801;
-  cursor: pointer;
+}
+
+.alert-danger > button:hover {
+  background: #8d0801;
+  color: black;
+  border: 3px solid black;
+}
+
+.alert-success {
+  background-color: #b3f2b5;
+  color: #209623;
+  border: 3px solid #209623;
+  border-radius: 5px;
+  padding: 0.3em 0.2em;
+}
+
+.alert-success > button {
+  color: #209623;
+  border: 3px solid #209623;
+}
+
+.alert-success > button:hover {
+  background: #209623;
+  color: black;
+  border: 3px solid black;
 }
 
 </style>
