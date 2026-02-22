@@ -10,15 +10,39 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 public interface EmployeeDao {
   @SqlQuery(
       """
-      SELECT * FROM diamonds_are_forever.employee
-      WHERE email = :email
+      SELECT
+         e.employeeId,
+         c.counterpartId,
+         c.name,
+         e.firstName,
+         e.lastName,
+         e.email,
+         e.isTmpPassword,
+         e.password,
+         e.role,
+         e.isActive
+      FROM diamonds_are_forever.employee e
+      JOIN diamonds_are_forever.counterpart c USING (counterpartId)
+      WHERE e.email = :email
       """)
   Employee findByEmail(@Bind("email") String email);
 
   @SqlQuery(
       """
-      SELECT * FROM diamonds_are_forever.employee
-      WHERE employeeId = :employeeId
+      SELECT
+        e.employeeId,
+        c.counterpartId,
+        c.name,
+        e.firstName,
+        e.lastName,
+        e.email,
+        e.isTmpPassword,
+        e.password,
+        e.role,
+        e.isActive
+      FROM diamonds_are_forever.employee e
+      JOIN diamonds_are_forever.counterpart c USING (counterpartId)
+      WHERE e.employeeId = :employeeId
       """)
   Employee findById(@Bind("employeeId") int employeeId);
 
