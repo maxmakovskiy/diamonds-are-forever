@@ -27,14 +27,19 @@ if (authStore.user) {
 </script>
 
 <template>
-  <div class="container">
+  <div id="items">
     <InventoryItem v-for="item in items" :item="item" /> 
   </div>
 </template>
 
 
 <style scoped>
-.container {
-  border: 1px solid black;
+#items {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 1em;
+  row-gap: 1em;
 }
+
 </style>

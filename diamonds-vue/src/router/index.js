@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import accountRoutes from './accountRoutes'
-import { useAuthStore, useAlertStore } from '@/stores';
-import { Login } from '@/pages';
+import items from './items'
+import actions from './actions'
+import profile from './profile'
+import { Login } from '@/pages'
+
+import { useAuthStore, useAlertStore } from '@/stores'
 
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,14 +14,19 @@ export const router = createRouter({
 
         { path: '/sign-in', component: Login },
 
-        { ...accountRoutes },
+        { ...items },
+        { ...actions },
+        { ...profile },
+
         
         // catch all redirect to home page
-        // { path: '/:pathMatch(.*)*', redirect: '/' }
+        { path: '/:pathMatch(.*)*', redirect: '/items' }
 
     ]
 });
 
+/*
+// TODO: temp comment
 router.beforeEach(async (to) => {
     // clear alert on route change
     const alertStore = useAlertStore();
@@ -35,5 +43,5 @@ router.beforeEach(async (to) => {
         return '/sign-in';
     }
 });
-
+*/
 
