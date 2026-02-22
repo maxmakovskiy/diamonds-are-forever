@@ -1,30 +1,47 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
+import { router } from '@/router'
 
-defineProps(['item'])
+const props = defineProps(['item'])
+
+
+function capitalize(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+const title = computed(() => capitalize(props.item.type))
+
+function details() {
+  router.push({ name: 'item_details', params: { id: props.item.lotId } })
+}
 
 </script>
 
 <template>
-  <div class="item">
-        <div>Id: {{ item.lotId }}</div>
-        <div>Stock name: {{ item.stockName }}</div>
-        <div>Origin: {{ item.origin }}</div>
-        <div>Purchase date: {{ item.purchaseDate }}</div>
-        <div>Type: {{ item.type }}</div>
-        <div>Updated: {{ item.updatedAt }}</div>
-        <div>Created: {{ item.createdAt }}</div>
+  <div @click="details()" class="item-container">
+    <h3>{{ title }}</h3>
+    <h4>{{ `Stock name: ${ item.stockName }` }}</h4>
+
+    <div>Origin: {{ item.origin }}</div>
+    <div>Purchase date: {{ item.purchaseDate }}</div>
+
   </div>
 </template>
 
 <style scoped>
-.item {
-  margin-top: 2rem;
+.item-container {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 1em;
+
   display: flex;
   flex-direction: column;
-  position: relative;
-  border: 1pt solid black;
+  justify-content: flex-start;
 }
 
+.item-container:hover {
+  box-shadow: 5px 3px 3px gray;
+  cursor: pointer;
+}
 
 </style>

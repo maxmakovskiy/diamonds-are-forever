@@ -1,0 +1,5 @@
+export { default as Layout } from './Layout.vue'
+export { default as Items } from './Items.vue'
+export { default as Details } from './Details.vue'
+export { default as Lifecycle } from './Lifecycle.vue'
+export { default as AddNewItem } from './AddNewItem.vue'

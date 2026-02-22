@@ -38,9 +38,12 @@ public class AuthController {
 
     if (user.isTmpPassword && Arrays.equals(loginPassword, user.password)) {
       ctx.sessionAttribute(USER_ID, String.valueOf(user.employeeId));
+
+      user.password = null;
+      ctx.json(user);
+
       ctx.status(HttpStatus.NO_CONTENT);
       return;
-      // ctx.redirect("/change-password");
     }
 
     byte[] salt = Security.extractSalt(user.password);
@@ -48,7 +51,11 @@ public class AuthController {
 
     if (Arrays.equals(hashed, user.password)) {
       ctx.sessionAttribute(USER_ID, String.valueOf(user.employeeId));
-      ctx.status(HttpStatus.NO_CONTENT);
+
+      user.password = null;
+      ctx.json(user);
+
+      ctx.status(HttpStatus.OK);
     } else {
       throw new UnauthorizedResponse();
     }
@@ -75,6 +82,7 @@ public class AuthController {
       throw new UnauthorizedResponse();
     }
 
+    user.password = null;
     ctx.json(user);
     ctx.status(HttpStatus.OK);
   }
