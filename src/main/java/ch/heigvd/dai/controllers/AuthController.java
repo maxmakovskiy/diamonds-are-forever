@@ -82,6 +82,7 @@ public class AuthController {
       throw new UnauthorizedResponse();
     }
 
+    user.password = null;
     ctx.json(user);
     ctx.status(HttpStatus.OK);
   }
